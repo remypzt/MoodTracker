@@ -1,4 +1,4 @@
-package remy.pouzet.moodtracker;
+package remy.pouzet.moodtracker.model;
 
 /**
  * Created by Remy Pouzet on 24/06/2019.

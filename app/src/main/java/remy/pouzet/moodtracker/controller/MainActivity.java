@@ -1,13 +1,13 @@
-package remy.pouzet.moodtracker;
+package remy.pouzet.moodtracker.controller;
 
-import android.graphics.Color;
-import android.support.v4.view.ViewPager;
+import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
+import remy.pouzet.moodtracker.R;
 
 public class MainActivity extends AppCompatActivity
 
@@ -16,13 +16,15 @@ public class MainActivity extends AppCompatActivity
     private ImageView mBackgroundImage;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
 
         super.onCreate(savedInstanceState);
-        mBackground = findViewById(R.id.activity_main_background) ;
         setContentView(R.layout.activity_main);
+
+       /* mBackground = findViewById(R.id.activity_main_background) ;*/
 
 
        /* ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
