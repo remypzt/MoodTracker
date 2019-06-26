@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/activity_main_background"
-        android:background="@color/light_sage">
+        android:background="@color/cornflower_blue_65">
 
         <ImageView
             android:id="@+id/imageView"
@@ -23,4 +23,3 @@
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
-
