@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity
         {
             public void onSwipeTop()
             {
-                Toast.makeText(MainActivity.this, "test", Toast.LENGTH_LONG).show();
+                
             }
 
             public void onSwipeBottom()
