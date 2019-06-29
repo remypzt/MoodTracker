@@ -1,37 +1,25 @@
 package remy.pouzet.moodtracker.controller;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-
-import java.util.ArrayList;
 
 import remy.pouzet.moodtracker.R;
-/*import remy.pouzet.moodtracker.model.MoodDisplay;*/
 import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 
 public class MainActivity extends AppCompatActivity
 
 {
-
-
-    private ImageView mBackgroundColor;
+    private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
-    private ImageView mBackgroundColorFaded;
-    private ImageView mSmileyGoodHumor;
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-
+        /*import remy.pouzet.moodtracker.model.MoodDisplay;*/
         /* mBackgroundColorFaded= findViewById(R.id.imageView2);*/
         /* mSmileyGoodHumor = findViewById(R.id.imageView3);*/
         /*mBackgroundColorFaded.setBackgroundColor(Color.BLACK);*/
@@ -51,7 +39,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mBackgroundColor = findViewById(R.id.imageView2);
+        mContraintLayout = findViewById(R.id.constraintLayout);
         mSmiley = findViewById(R.id.imageView3);
 
         final int[] counter = {0};
@@ -65,45 +53,48 @@ public class MainActivity extends AppCompatActivity
         };
 
         final int[] arrayBackgroundColors = new int[]{
-        R.color.banana_yellow,
-        R.color.light_sage,
-        R.color.cornflower_blue_65,
-        R.color.warm_grey,
-        R.color.faded_red,
+                R.color.banana_yellow,
+                R.color.light_sage,
+                R.color.cornflower_blue_65,
+                R.color.warm_grey,
+                R.color.faded_red,
         };
 
 
-        mBackgroundColor.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
+        mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
             public void onSwipeTop()
             {
-                if (counter[0] > 0) {
+                if (counter[0] > 0)
+                {
                     counter[0]--;
                     mSmiley.setImageResource(arraySmileys[counter[0]]);
-                   /* mBackgroundColor.setBackground(arrayBackgroundColors);*/
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
 
 
-                } else {
+                } else
+                {
                     counter[0] = 4;
                     mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    /* mBackgroundColor.setBackground(arrayBackgroundColors);*/
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
                 }
             }
 
-           public void onSwipeBottom()
+            public void onSwipeBottom()
             {
-                if (counter[0] < 4) {
+                if (counter[0] < 4)
+                {
                     counter[0]++;
                     mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    /* mBackgroundColor.setBackground(arrayBackgroundColors);*/
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
 
-                } else {
+                } else
+                {
                     counter[0] = 0;
                     mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    /* mBackgroundColor.setBackground(arrayBackgroundColors);*/
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
                 }
             }
         });
     }
-
 }
