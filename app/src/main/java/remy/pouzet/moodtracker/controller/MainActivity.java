@@ -1,10 +1,14 @@
 package remy.pouzet.moodtracker.controller;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import remy.pouzet.moodtracker.R;
 import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
@@ -14,34 +18,52 @@ public class MainActivity extends AppCompatActivity
 {
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
+    private ImageView mComment;
+    private ImageView mHistoric;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        /*import remy.pouzet.moodtracker.model.MoodDisplay;*/
-        /* mBackgroundColorFaded= findViewById(R.id.imageView2);*/
-        /* mSmileyGoodHumor = findViewById(R.id.imageView3);*/
-        /*mBackgroundColorFaded.setBackgroundColor(Color.BLACK);*/
-        /*mSmileyGoodHumor.setImageResource(R.mipmap.smiley_happy);*/
-         /*mSmiley.setImageResource(R.mipmap.smiley_sad);
-        mBackgroundColor.setBackgroundColor(Color.CYAN);*/
-        /*ArrayList<ImageView> smileyList = new ArrayList<>();
-        smileyList.add(mSmiley);
-        smileyList.add(mSmileyGoodHumor);*/
-        /*MoodDisplay goodhumor = new MoodDisplay( mBackgroundColorFaded, mSmileyGoodHumor);
-        MoodDisplay badhumor = new MoodDisplay( mBackgroundColor, mSmiley);
-        ArrayList<MoodDisplay> humorList = new ArrayList();
-        humorList.add(goodhumor);
-        humorList.add(badhumor);
-        humorList.get(1);*/
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mContraintLayout = findViewById(R.id.constraintLayout);
-        mSmiley = findViewById(R.id.imageView3);
+        mSmiley = findViewById(R.id.smileyView);
+        mComment = findViewById(R.id.commentLogoView);
+        mHistoric = findViewById(R.id.historicAcessLogoView);
 
+        mComment.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                    }
+                });
+                builder.setNegativeButton("ANNULER", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+                builder.setView(R.layout.comment_alert_dialog);
+
+               builder.setTitle("Commentaire");
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        });
+
+        // Display Mood management
         final int[] counter = {0};
 
         final int[] arraySmileys = new int[]{
@@ -59,7 +81,6 @@ public class MainActivity extends AppCompatActivity
                 R.color.warm_grey,
                 R.color.faded_red,
         };
-
 
         mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
@@ -96,5 +117,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        // END Display Mood management
+
     }
 }

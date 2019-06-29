@@ -10,7 +10,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/smileyView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -21,6 +21,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/smiley_happy"
         tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/commentLogoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        app:srcCompat="@mipmap/ic_note_add_black" />
+
+    <ImageView
+        android:id="@+id/historicAcessLogoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        app:srcCompat="@mipmap/ic_history_black" />
 
 </android.support.constraint.ConstraintLayout>
 
