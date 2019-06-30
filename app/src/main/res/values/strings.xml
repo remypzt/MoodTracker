@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MoodTracker</string>
+    <string name="comment_hint">Tapez votre commentaire ici … </string>
 </resources>
