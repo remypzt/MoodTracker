@@ -84,6 +84,11 @@ public class MainActivity extends AppCompatActivity
 
                     }
                 });
+
+                // Validation and save comment management
+                // TO_DO : thinking about day time management (must have only one comment per day)
+                // = create new one ArrayList comment in HistoricActivity every day
+                // = comment in commentList2 must be remove at every ending day
                 builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id)
                     {
@@ -111,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
                         } else
                         {
+                            commentList2.remove(0);
                             commentList2.add(userComment);
 
                             Gson gson3 = new Gson();
@@ -123,6 +129,8 @@ public class MainActivity extends AppCompatActivity
 
                     }
                 });
+                //END\\ Validation and save comment management
+
                 builder.setNegativeButton("ANNULER", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog : do nothing and quit the dialog
@@ -132,7 +140,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        // END Comment button management
+        //END\\ Comment button management
 
         // Historic button management
         mHistoric.setOnClickListener(new View.OnClickListener()
@@ -144,6 +152,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(historicActivity);
             }
         });
+        //END\\ Historic button management
+
 
         // Display Mood management
         final int[] counter = {0};
@@ -199,7 +209,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        // END Display Mood management
+        //END\\ Display Mood management
 
     }
 }
