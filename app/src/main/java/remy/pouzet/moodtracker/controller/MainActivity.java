@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import remy.pouzet.moodtracker.R;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private EditText mCommentInput;
     private SharedPreferences mPreferences;
 
+    int counter = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -50,23 +52,27 @@ public class MainActivity extends AppCompatActivity
 
         mPreferences = getPreferences(MODE_PRIVATE);
 
+
+
         //Counter management
-        Integer[] counter = {0};
+
+        // TODO fix counter management bug (something around jsontype or counter type),
+
+
 
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
-        String fromJsonCounter = mPreferences.getString(PREF_KEY_COUNTER, null);
+        int fromJsonCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
 
-        Gson gson5 = new Gson();
-        final Integer[] lastCounter = gson5.fromJson(fromJsonCounter, new TypeToken<Integer>()
+        if (mPreferences != null)
         {
-        }.getType());
+            Gson gson5 = new Gson();
+            int lastCounter =  gson5.fromJson(fromJsonCounter, );
 
-        if (fromJsonCounter != null)
-        {
+
             counter = lastCounter;
         }
 
-        final Integer[] finalCounter = counter;
+
         //END\\ Counter management
 
 
@@ -91,34 +97,34 @@ public class MainActivity extends AppCompatActivity
         {
             public void onSwipeTop()
             {
-                if (finalCounter[0] > 0)
+                if (counter > 0)
                 {
-                    finalCounter[0]--;
-                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
+                    counter --;
+                    mSmiley.setImageResource(arraySmileys[counter]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
 
 
                 } else
                 {
-                    finalCounter[0] = 4;
-                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
+                    counter = 4;
+                    mSmiley.setImageResource(arraySmileys[counter]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
                 }
             }
 
             public void onSwipeBottom()
             {
-                if (finalCounter[0] < 4)
+                if (counter < 4)
                 {
-                    finalCounter[0]++;
-                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
+                    counter ++;
+                    mSmiley.setImageResource(arraySmileys[counter]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
 
                 } else
                 {
-                    finalCounter[0] = 0;
-                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
+                    counter = 0;
+                    mSmiley.setImageResource(arraySmileys[counter]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
                 }
             }
             // TODO : save mood :
@@ -133,8 +139,9 @@ public class MainActivity extends AppCompatActivity
         // TODO : fix mCommentInput bug
         //
         //  (cause I had made alertdialog XML Layout, mCommentInput ID belong to another XML than mainactivity XML)
-        //  after this line there is solution (even i'm not sure to understand everything)whose working
-        //  but create an another problems( java.lang.IllegalStateException: You need to use a Theme.AppCompat
+        //  after this line there is solution (even i'm not sure to understand everything, inflate is for fragment?)
+        //  who's working
+        //  but create an another problem( java.lang.IllegalStateException: You need to use a Theme.AppCompat
         //  theme (or descendant) with this activity.
 
         //AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
@@ -165,7 +172,7 @@ public class MainActivity extends AppCompatActivity
                 // positive button : Validation and save comment management
                 // TODO : thinking about day time management (must have only one comment per day)
                 //      - create new one ArrayList comment in HistoricActivity and adding inside it
-                //      the last comment saved in commetlist2
+                //      the last comment saved in commentlist2
                 //      - comment in commentList2 must be remove at every ending day
 
                 builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener()
@@ -239,7 +246,7 @@ public class MainActivity extends AppCompatActivity
                     public void onTextChanged(CharSequence s, int start, int before, int count)
                     {
                         /*POSITIVEBUTTONID.setEnabled(s.toString().length() != 0);*/
-                        //TODO POSITIVEBUTTONID.setDisable
+                        //TODO POSITIVEBUTTONID.setDisable by default
                     }
 
                     @Override
@@ -267,10 +274,17 @@ public class MainActivity extends AppCompatActivity
 
         // Counter saving
         Gson gson4 = new Gson();
-        String jsonCounter = gson4.toJson(counter);
+        gson4.toJson(counter);
 
         SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(PREF_KEY_COUNTER, jsonCounter).apply();
+        editor.putString(PREF_KEY_COUNTER, gson4.toJson(counter)).apply();
         //END\\ Counter saving
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
     }
 }
