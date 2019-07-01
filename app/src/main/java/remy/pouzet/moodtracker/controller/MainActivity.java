@@ -13,7 +13,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,6 +25,9 @@ import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 public class MainActivity extends AppCompatActivity
 
 {
+    public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
+    public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER";
+
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private ImageView mComment;
@@ -33,14 +35,11 @@ public class MainActivity extends AppCompatActivity
     private EditText mCommentInput;
     private SharedPreferences mPreferences;
 
-    public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -48,116 +47,30 @@ public class MainActivity extends AppCompatActivity
         mSmiley = findViewById(R.id.smileyView);
         mComment = findViewById(R.id.commentLogoView);
         mHistoric = findViewById(R.id.historicAcessLogoView);
-        mCommentInput = findViewById(R.id.comment);
 
-        mPreferences = getPreferences (MODE_PRIVATE);
+        mPreferences = getPreferences(MODE_PRIVATE);
 
+        //Counter management
+        Integer[] counter = {0};
 
-        // Comment button management
-        mComment.setOnClickListener(new View.OnClickListener()
+        mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
+        String fromJsonCounter = mPreferences.getString(PREF_KEY_COUNTER, null);
+
+        Gson gson5 = new Gson();
+        final Integer[] lastCounter = gson5.fromJson(fromJsonCounter, new TypeToken<Integer>()
         {
-            @Override
-            public void onClick(View v)
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        }.getType());
 
-                builder.setView(R.layout.comment_alert_dialog);
-
-               builder.setTitle("Commentaire");
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-                mCommentInput.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                        }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        /*POSITIVEBUTTONID.setEnabled(s.toString().length() != 0);*/
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-
-                // Validation and save comment management
-                // TO_DO : thinking about day time management (must have only one comment per day)
-                // = create new one ArrayList comment in HistoricActivity every day
-                // = comment in commentList2 must be remove at every ending day
-                builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        // User clicked OK button
-                        String userComment = mCommentInput.getText().toString();
-
-                        mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
-                        String fromJsonCommentList = mPreferences.getString(PREF_KEY_COMMENT, null);
-
-                        Gson gson = new Gson();
-                        ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
-                        {
-                        }.getType());
-
-                        if (null == fromJsonCommentList)
-                        {
-                            ArrayList<String> commentList = new ArrayList();
-                            commentList.add(userComment);
-
-                            Gson gson2 = new Gson();
-                            String jsonCommentList = gson2.toJson(commentList);
-
-                            SharedPreferences.Editor editor = mPreferences.edit();
-                            editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
-
-                        } else
-                        {
-                            commentList2.remove(0);
-                            commentList2.add(userComment);
-
-                            Gson gson3 = new Gson();
-                            String commentList = gson3.toJson(commentList2);
-
-                            SharedPreferences.Editor editor = mPreferences.edit();
-                            editor.putString(PREF_KEY_COMMENT, commentList).apply();
-
-                        }
-
-                    }
-                });
-                //END\\ Validation and save comment management
-
-                builder.setNegativeButton("ANNULER", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog : do nothing and quit the dialog
-                    }
-                });
-
-
-            }
-        });
-        //END\\ Comment button management
-
-        // Historic button management
-        mHistoric.setOnClickListener(new View.OnClickListener()
+        if (fromJsonCounter != null)
         {
-            @Override
-            public void onClick(View v)
-            {
-                Intent historicActivity = new Intent(MainActivity.this, HistoricActivity.class);
-                startActivity(historicActivity);
-            }
-        });
-        //END\\ Historic button management
+            counter = lastCounter;
+        }
+
+        final Integer[] finalCounter = counter;
+        //END\\ Counter management
 
 
-        // Display Mood management
-        final int[] counter = {0};
-
+        // Display Mood and swipe management
         final int[] arraySmileys = new int[]{
                 R.mipmap.smiley_super_happy,
                 R.mipmap.smiley_happy,
@@ -178,38 +91,186 @@ public class MainActivity extends AppCompatActivity
         {
             public void onSwipeTop()
             {
-                if (counter[0] > 0)
+                if (finalCounter[0] > 0)
                 {
-                    counter[0]--;
-                    mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
+                    finalCounter[0]--;
+                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
 
 
                 } else
                 {
-                    counter[0] = 4;
-                    mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
+                    finalCounter[0] = 4;
+                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
                 }
             }
 
             public void onSwipeBottom()
             {
-                if (counter[0] < 4)
+                if (finalCounter[0] < 4)
                 {
-                    counter[0]++;
-                    mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
+                    finalCounter[0]++;
+                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
 
                 } else
                 {
-                    counter[0] = 0;
-                    mSmiley.setImageResource(arraySmileys[counter[0]]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter[0]]));
+                    finalCounter[0] = 0;
+                    mSmiley.setImageResource(arraySmileys[finalCounter[0]]);
+                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[finalCounter[0]]));
                 }
             }
+            // TODO : save mood :
+            // - at 2359 get counter and save it in arraylist ,
+            // in historicActivity define int=mood=display
         });
-        //END\\ Display Mood management
+        //END\\ Display Mood and swipe management
 
+
+        // Comment button management
+
+        // TODO : fix mCommentInput bug
+        //
+        //  (cause I had made alertdialog XML Layout, mCommentInput ID belong to another XML than mainactivity XML)
+        //  after this line there is solution (even i'm not sure to understand everything)whose working
+        //  but create an another problems( java.lang.IllegalStateException: You need to use a Theme.AppCompat
+        //  theme (or descendant) with this activity.
+
+        //AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        //
+        //                LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE );
+        //                View dialogView = inflater.inflate(R.layout.comment_alert_dialog, null);
+        //
+        //                builder.setView(dialogView);
+        //
+        //                mCommentInput = (EditText)  dialogView.findViewById(R.id.comment);
+
+        mComment.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                builder.setView(R.layout.comment_alert_dialog);
+
+                mCommentInput = (EditText) findViewById(R.id.comment);
+
+                builder.setTitle("Commentaire");
+
+
+
+
+                // positive button : Validation and save comment management
+                // TODO : thinking about day time management (must have only one comment per day)
+                //      - create new one ArrayList comment in HistoricActivity and adding inside it
+                //      the last comment saved in commetlist2
+                //      - comment in commentList2 must be remove at every ending day
+
+                builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        String userComment = mCommentInput.getText().toString();
+
+                        System.out.println(mCommentInput);
+
+                        // User clicked OK button
+                        if (userComment != null)
+                        {
+
+                            mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
+                            String fromJsonCommentList = mPreferences.getString(PREF_KEY_COMMENT, null);
+
+                            Gson gson = new Gson();
+                            ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
+                            {
+                            }.getType());
+
+                            if (null == fromJsonCommentList)
+                            {
+                                ArrayList<String> commentList = new ArrayList();
+                                commentList.add(userComment);
+
+                                Gson gson2 = new Gson();
+                                String jsonCommentList = gson2.toJson(commentList);
+
+                                SharedPreferences.Editor editor = mPreferences.edit();
+                                editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+
+                            } else
+                            {
+                                commentList2.remove(0);
+                                commentList2.add(userComment);
+
+                                Gson gson3 = new Gson();
+                                String commentList = gson3.toJson(commentList2);
+
+                                SharedPreferences.Editor editor = mPreferences.edit();
+                                editor.putString(PREF_KEY_COMMENT, commentList).apply();
+
+                            }
+                        }
+                    }
+                });
+                //END\\ positive button : Validation and save comment management
+
+
+                builder.setNegativeButton("ANNULER", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        // User cancelled the dialog : do nothing and quit the dialog
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                mCommentInput.addTextChangedListener(new TextWatcher()
+                {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                    {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count)
+                    {
+                        /*POSITIVEBUTTONID.setEnabled(s.toString().length() != 0);*/
+                        //TODO POSITIVEBUTTONID.setDisable
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s)
+                    {
+
+                    }
+                });
+            }
+        });
+        //END\\ Comment button management
+
+        // Historic button management
+        mHistoric.setOnClickListener(new View.OnClickListener()
+
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent historicActivity = new Intent(MainActivity.this, HistoricActivity.class);
+                startActivity(historicActivity);
+            }
+        });
+        //END\\ Historic button management
+
+        // Counter saving
+        Gson gson4 = new Gson();
+        String jsonCounter = gson4.toJson(counter);
+
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(PREF_KEY_COUNTER, jsonCounter).apply();
+        //END\\ Counter saving
     }
 }
