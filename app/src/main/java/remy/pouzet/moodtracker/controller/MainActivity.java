@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,15 +25,13 @@ public class MainActivity extends AppCompatActivity
 {
     public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
-
+    int counter = 0;
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private ImageView mComment;
     private ImageView mHistoric;
     private EditText mCommentInput;
     private SharedPreferences mPreferences;
-
-    int counter = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -55,13 +51,12 @@ public class MainActivity extends AppCompatActivity
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
 
-        if (mPreferences != null)
+        if (previousCounter != 0)
         {
 
             counter = previousCounter;
         }
         //END\\ Counter management
-
 
 
         // Display Mood and swipe management
@@ -90,7 +85,7 @@ public class MainActivity extends AppCompatActivity
             {
                 if (counter > 0)
                 {
-                    counter --;
+                    counter--;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
 
@@ -101,27 +96,35 @@ public class MainActivity extends AppCompatActivity
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
                 }
+                // Counter saving
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putInt(PREF_KEY_COUNTER, counter).apply();
+                //END\\ Counter saving
             }
 
             public void onSwipeBottom()
             {
                 if (counter < 4)
                 {
-                    counter ++;
+                    counter++;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
-
                 } else
                 {
                     counter = 0;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
                 }
+                //Counter saving
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putInt(PREF_KEY_COUNTER, counter).apply();
+                //END\\ Counter saving
             }
             // TODO : save mood :
             // - at 2359 get counter and save it in arraylist ,
             // in historicActivity define int=mood=display
         });
+
         //END\\ Display Mood and swipe management
 
 
@@ -156,8 +159,6 @@ public class MainActivity extends AppCompatActivity
                 mCommentInput = (EditText) findViewById(R.id.comment);
 
                 builder.setTitle("Commentaire");
-
-
 
 
                 // positive button : Validation and save comment management
@@ -240,50 +241,5 @@ public class MainActivity extends AppCompatActivity
             }
         });
         //END\\ Historic button management
-
-        // Counter saving
-
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt(PREF_KEY_COUNTER, counter).apply();
-        //END\\ Counter saving
     }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-
-        // Counter saving
-
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt(PREF_KEY_COUNTER, counter).apply();
-        //END\\ Counter saving
-    }
-
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-    }
-
-
 }
