@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import remy.pouzet.moodtracker.R;
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity
 
 {
     public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
-    public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER";
+    public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
@@ -52,46 +51,38 @@ public class MainActivity extends AppCompatActivity
 
         mPreferences = getPreferences(MODE_PRIVATE);
 
-
-
         //Counter management
-
-        // TODO fix counter management bug (something around jsontype or counter type),
-
-
-
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
-        int fromJsonCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
+        int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
 
         if (mPreferences != null)
         {
-            Gson gson5 = new Gson();
-            int lastCounter =  gson5.fromJson(fromJsonCounter, );
 
-
-            counter = lastCounter;
+            counter = previousCounter;
         }
-
-
         //END\\ Counter management
+
 
 
         // Display Mood and swipe management
         final int[] arraySmileys = new int[]{
-                R.mipmap.smiley_super_happy,
                 R.mipmap.smiley_happy,
                 R.mipmap.smiley_normal,
                 R.mipmap.smiley_disappointed,
                 R.mipmap.smiley_sad,
+                R.mipmap.smiley_super_happy,
         };
 
         final int[] arrayBackgroundColors = new int[]{
-                R.color.banana_yellow,
                 R.color.light_sage,
                 R.color.cornflower_blue_65,
                 R.color.warm_grey,
                 R.color.faded_red,
+                R.color.banana_yellow,
         };
+
+        mSmiley.setImageResource(arraySmileys[counter]);
+        mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
 
         mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
@@ -233,28 +224,6 @@ public class MainActivity extends AppCompatActivity
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
-                mCommentInput.addTextChangedListener(new TextWatcher()
-                {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
-                    {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count)
-                    {
-                        /*POSITIVEBUTTONID.setEnabled(s.toString().length() != 0);*/
-                        //TODO POSITIVEBUTTONID.setDisable by default
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s)
-                    {
-
-                    }
-                });
             }
         });
         //END\\ Comment button management
@@ -273,11 +242,9 @@ public class MainActivity extends AppCompatActivity
         //END\\ Historic button management
 
         // Counter saving
-        Gson gson4 = new Gson();
-        gson4.toJson(counter);
 
         SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(PREF_KEY_COUNTER, gson4.toJson(counter)).apply();
+        editor.putInt(PREF_KEY_COUNTER, counter).apply();
         //END\\ Counter saving
     }
 
@@ -287,4 +254,36 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
 
     }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        // Counter saving
+
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt(PREF_KEY_COUNTER, counter).apply();
+        //END\\ Counter saving
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+    }
+
+
 }
