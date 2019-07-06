@@ -1,6 +1,7 @@
 package remy.pouzet.moodtracker.controller;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,30 +9,44 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import remy.pouzet.moodtracker.R;
 import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
+import remy.pouzet.moodtracker.model.Mood;
 
 public class MainActivity extends AppCompatActivity
 
 {
     public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
+
     int counter = 0;
+
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private ImageView mComment;
     private ImageView mHistoric;
     private EditText mCommentInput;
+
+    private String userComment;
+    private String mDate;
+
     private SharedPreferences mPreferences;
+    private Mood mMood;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -46,6 +61,19 @@ public class MainActivity extends AppCompatActivity
         mHistoric = findViewById(R.id.historicAcessLogoView);
 
         mPreferences = getPreferences(MODE_PRIVATE);
+
+        mMood = new Mood(counter, userComment, mDate);
+
+        //Date management
+        Date now = new Date();
+
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        String mDate = dateformatter.format(now);
+
+        mMood.setDate(mDate);
+
+        System.out.println(mDate);
+        //END\\ Date management
 
         //Counter management
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
@@ -100,6 +128,8 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
                 //END\\ Counter saving
+
+                mMood.setCounter(counter);
             }
 
             public void onSwipeBottom()
@@ -119,34 +149,15 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
                 //END\\ Counter saving
-            }
-            // TODO : save mood :
-            // - at 2359 get counter and save it in arraylist ,
-            // in historicActivity define int=mood=display
-        });
 
+                mMood.setCounter(counter);
+            }
+        });
         //END\\ Display Mood and swipe management
 
 
         // Comment button management
-
         // TODO : fix mCommentInput bug
-        //
-        //  (cause I had made alertdialog XML Layout, mCommentInput ID belong to another XML than mainactivity XML)
-        //  after this line there is solution (even i'm not sure to understand everything, inflate is for fragment?)
-        //  who's working
-        //  but create an another problem( java.lang.IllegalStateException: You need to use a Theme.AppCompat
-        //  theme (or descendant) with this activity.
-
-        //AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-        //
-        //                LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE );
-        //                View dialogView = inflater.inflate(R.layout.comment_alert_dialog, null);
-        //
-        //                builder.setView(dialogView);
-        //
-        //                mCommentInput = (EditText)  dialogView.findViewById(R.id.comment);
-
         mComment.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -154,38 +165,52 @@ public class MainActivity extends AppCompatActivity
             {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
+                //Inflating ... ?
+                Context context = builder.getContext();
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View view = inflater.inflate(R.layout.comment_alert_dialog, null, false);
+                //END\\//Inflating ... ?
+
                 builder.setView(R.layout.comment_alert_dialog);
 
                 mCommentInput = (EditText) findViewById(R.id.comment);
 
                 builder.setTitle("Commentaire");
 
+                mCommentInput.addTextChangedListener(new TextWatcher()
+                {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                    {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count)
+                    {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s)
+                    {
+                        Toast.makeText(MainActivity.this, "3" +mCommentInput.getText().toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
 
                 // positive button : Validation and save comment management
-                // TODO : thinking about day time management (must have only one comment per day)
-                //      - create new one ArrayList comment in HistoricActivity and adding inside it
-                //      the last comment saved in commentlist2
-                //      - comment in commentList2 must be remove at every ending day
-
+                // Comment management : if there is already an comment , replace it by this one,
+                // else create ArrayListComment
                 builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int id)
                     {
                         String userComment = mCommentInput.getText().toString();
-
-                        System.out.println(mCommentInput);
-
-                        // User clicked OK button
                         if (userComment != null)
                         {
 
                             mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
                             String fromJsonCommentList = mPreferences.getString(PREF_KEY_COMMENT, null);
-
-                            Gson gson = new Gson();
-                            ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
-                            {
-                            }.getType());
 
                             if (null == fromJsonCommentList)
                             {
@@ -198,16 +223,25 @@ public class MainActivity extends AppCompatActivity
                                 SharedPreferences.Editor editor = mPreferences.edit();
                                 editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
 
+                                Toast.makeText(MainActivity.this, "1" +mCommentInput.getText().toString(), Toast.LENGTH_LONG).show();
+
                             } else
                             {
+                                Gson gson = new Gson();
+                                ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
+                                {
+                                }.getType());
+
                                 commentList2.remove(0);
                                 commentList2.add(userComment);
 
                                 Gson gson3 = new Gson();
-                                String commentList = gson3.toJson(commentList2);
+                                String jsonCommentList = gson3.toJson(commentList2);
 
                                 SharedPreferences.Editor editor = mPreferences.edit();
-                                editor.putString(PREF_KEY_COMMENT, commentList).apply();
+                                editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+
+                                Toast.makeText(MainActivity.this, "2" + mCommentInput.getText().toString(), Toast.LENGTH_LONG).show();
 
                             }
                         }
@@ -223,11 +257,17 @@ public class MainActivity extends AppCompatActivity
                         // User cancelled the dialog : do nothing and quit the dialog
                     }
                 });
+
                 AlertDialog dialog = builder.create();
                 dialog.show();
+
+
+
+
             }
         });
         //END\\ Comment button management
+
 
         // Historic button management
         mHistoric.setOnClickListener(new View.OnClickListener()
