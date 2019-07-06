@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         System.out.println(mDate);
         //END\\ Date management
 
-        //Counter management
+        //Counter management,
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
 
