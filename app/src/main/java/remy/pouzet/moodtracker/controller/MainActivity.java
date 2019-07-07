@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity
 
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
+
+        mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
+        final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
 
         //mMood Management
         mMood = new Mood(counter, userComment, mDate);
@@ -172,30 +176,20 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id)
                             {
                                 EditText mCommentInput = (EditText) ((AlertDialog) dialog).findViewById(R.id.comment);
-
                                 String userComment = mCommentInput.getText().toString();
-                                if (userComment != null)
+
+                                if (userComment.length() != 0)
                                 {
-                                    mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
-                                    String previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
 
-                                    if (null == previousUserComment)
+                                    previousUserComment[0] = userComment;
+
+                                    SharedPreferences.Editor editor = mPreferences.edit();
+                                    editor.putString(PREF_KEY_COMMENT, previousUserComment[0]).apply();
+
+                                    mMood.setComment(userComment);
+                                } else
                                     {
-                                        String firsUserComment = userComment;
-
-                                        SharedPreferences.Editor editor = mPreferences.edit();
-                                        editor.putString(PREF_KEY_COMMENT, firsUserComment).apply();
-
-                                        mMood.setComment(userComment);
-                                    } else
-                                    {
-                                        previousUserComment = userComment;
-
-                                        SharedPreferences.Editor editor = mPreferences.edit();
-                                        editor.putString(PREF_KEY_COMMENT, previousUserComment).apply();
-
-                                        mMood.setComment(userComment);
-                                    }
+                                        Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_LONG).show();
                                 }
                             }
                         })
