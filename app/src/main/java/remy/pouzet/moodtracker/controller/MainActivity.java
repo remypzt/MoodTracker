@@ -13,7 +13,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import remy.pouzet.moodtracker.R;
@@ -26,14 +30,12 @@ public class MainActivity extends AppCompatActivity
     public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
     public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
-
+    public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
 
     int counter = 0;
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
-    private ImageView mComment;
-    private ImageView mHistoric;
     private EditText mCommentInput;
 
     private String userComment;
@@ -51,22 +53,28 @@ public class MainActivity extends AppCompatActivity
 
         mContraintLayout = findViewById(R.id.constraintLayout);
         mSmiley = findViewById(R.id.smileyView);
-        mComment = findViewById(R.id.commentLogoView);
-        mHistoric = findViewById(R.id.historicAcessLogoView);
+        ImageView comment = findViewById(R.id.commentLogoView);
+        ImageView historic = findViewById(R.id.historicAcessLogoView);
 
+        //mPreferences management
         mPreferences = getPreferences(MODE_PRIVATE);
 
-        mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-
-        mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
         final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
+        String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+
+        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+
+
+        //END\|mPreferences management
 
         //mMood Management
         mMood = new Mood(counter, userComment, mDate);
 
+        counter = previousCounter;
+        userComment = previousUserComment[0];
+        mDate = previousDate;
         //END\| mMood Management
-
 
 
         //Date management
@@ -75,6 +83,37 @@ public class MainActivity extends AppCompatActivity
         DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
         String mDate = dateformatter.format(now);
 
+        // if it's new day, then save previous mood
+        if (!mDate.equals(previousDate))
+        {
+            if (fromJsonMoods == null)
+            {
+                ArrayList<Mood> moods = new ArrayList<>();
+                moods.add(mMood);
+
+                Gson gson = new Gson();
+                String jsonMoods = gson.toJson(moods);
+
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+            } else
+            {
+                Gson gson1 = new Gson();
+                ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+                {
+                }.getType());
+
+                moods.add(mMood);
+
+                Gson gson = new Gson();
+                String jsonMoods = gson.toJson(moods);
+
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+            }
+        }
+        //END\|
+        // if it's new day, then save previous mood
         mMood.setDate(mDate);
 
         SharedPreferences.Editor editor = mPreferences.edit();
@@ -160,7 +199,7 @@ public class MainActivity extends AppCompatActivity
 
         // Comment button management
         // TODO : fix mCommentInput bug
-        mComment.setOnClickListener(new View.OnClickListener()
+        comment.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View v)
@@ -188,8 +227,8 @@ public class MainActivity extends AppCompatActivity
 
                                     mMood.setComment(userComment);
                                 } else
-                                    {
-                                        Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_LONG).show();
+                                {
+                                    Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_LONG).show();
                                 }
                             }
                         })
@@ -208,7 +247,7 @@ public class MainActivity extends AppCompatActivity
 
 
         // Historic button management
-        mHistoric.setOnClickListener(new View.OnClickListener()
+        historic.setOnClickListener(new View.OnClickListener()
 
         {
             @Override
