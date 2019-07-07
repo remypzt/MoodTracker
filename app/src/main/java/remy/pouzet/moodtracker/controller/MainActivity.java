@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         System.out.println(mDate);
         //END\\ Date management
 
-        //Counter management,
+        //Counter management
         mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
 
@@ -161,109 +161,63 @@ public class MainActivity extends AppCompatActivity
         mComment.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View v)
+            public void onClick(final View v)
             {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                new AlertDialog.Builder(v.getContext())
+                        .setView(R.layout.comment_alert_dialog)
+                        .setTitle("Commentaire")
+                        .setPositiveButton("VALIDER", new DialogInterface.OnClickListener()
+                        {// positive button : Validation and save comment management
+                            // Comment management : if there is already an comment , replace it by this one,
+                            // else create ArrayListComment
 
-                //Inflating ... ?
-                Context context = builder.getContext();
-                LayoutInflater inflater = LayoutInflater.from(context);
-                View view = inflater.inflate(R.layout.comment_alert_dialog, null, false);
-                //END\\//Inflating ... ?
-
-                builder.setView(R.layout.comment_alert_dialog);
-
-                mCommentInput = (EditText) findViewById(R.id.comment);
-
-                builder.setTitle("Commentaire");
-
-                mCommentInput.addTextChangedListener(new TextWatcher()
-                {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
-                    {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count)
-                    {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s)
-                    {
-                        Toast.makeText(MainActivity.this, "3" +mCommentInput.getText().toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-
-
-                // positive button : Validation and save comment management
-                // Comment management : if there is already an comment , replace it by this one,
-                // else create ArrayListComment
-                builder.setPositiveButton("VALIDER", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        String userComment = mCommentInput.getText().toString();
-                        if (userComment != null)
-                        {
-
-                            mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
-                            String fromJsonCommentList = mPreferences.getString(PREF_KEY_COMMENT, null);
-
-                            if (null == fromJsonCommentList)
+                            public void onClick(DialogInterface dialog, int id)
                             {
-                                ArrayList<String> commentList = new ArrayList();
-                                commentList.add(userComment);
+                                EditText mCommentInput = (EditText) ((AlertDialog) dialog).findViewById(R.id.comment);
 
-                                Gson gson2 = new Gson();
-                                String jsonCommentList = gson2.toJson(commentList);
-
-                                SharedPreferences.Editor editor = mPreferences.edit();
-                                editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
-
-                                Toast.makeText(MainActivity.this, "1" +mCommentInput.getText().toString(), Toast.LENGTH_LONG).show();
-
-                            } else
-                            {
-                                Gson gson = new Gson();
-                                ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
+                                String userComment = mCommentInput.getText().toString();
+                                if (userComment != null)
                                 {
-                                }.getType());
+                                    mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
+                                    String fromJsonCommentList = mPreferences.getString(PREF_KEY_COMMENT, null);
+                                    if (null == fromJsonCommentList)
+                                    {
+                                        ArrayList<String> commentList = new ArrayList();
+                                        commentList.add(userComment);
 
-                                commentList2.remove(0);
-                                commentList2.add(userComment);
+                                        Gson gson2 = new Gson();
+                                        String jsonCommentList = gson2.toJson(commentList);
 
-                                Gson gson3 = new Gson();
-                                String jsonCommentList = gson3.toJson(commentList2);
+                                        SharedPreferences.Editor editor = mPreferences.edit();
+                                        editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+                                    } else
+                                    {
+                                        Gson gson = new Gson();
+                                        ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
+                                        {
+                                        }.getType());
 
-                                SharedPreferences.Editor editor = mPreferences.edit();
-                                editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+                                        commentList2.remove(0);
+                                        commentList2.add(userComment);
 
-                                Toast.makeText(MainActivity.this, "2" + mCommentInput.getText().toString(), Toast.LENGTH_LONG).show();
+                                        Gson gson3 = new Gson();
+                                        String jsonCommentList = gson3.toJson(commentList2);
 
+                                        SharedPreferences.Editor editor = mPreferences.edit();
+                                        editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+                                    }
+                                }
                             }
-                        }
-                    }
-                });
-                //END\\ positive button : Validation and save comment management
-
-
-                builder.setNegativeButton("ANNULER", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        // User cancelled the dialog : do nothing and quit the dialog
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-
-
-
+                        })
+                        //END\\ positive button : Validation and save comment management
+                        .setNegativeButton("ANNULER", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                // User cancelled the dialog : do nothing and quit the dialog
+                            }
+                        })
+                        .show();
             }
         });
         //END\\ Comment button management
