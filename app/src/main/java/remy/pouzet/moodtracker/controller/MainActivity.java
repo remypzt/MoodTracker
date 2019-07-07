@@ -1,7 +1,6 @@
 package remy.pouzet.moodtracker.controller;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,30 +8,24 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import remy.pouzet.moodtracker.R;
-import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 import remy.pouzet.moodtracker.model.Mood;
+import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 
 public class MainActivity extends AppCompatActivity
 
 {
     public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
+    public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
+
 
     int counter = 0;
 
@@ -62,7 +55,15 @@ public class MainActivity extends AppCompatActivity
 
         mPreferences = getPreferences(MODE_PRIVATE);
 
+        mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
+        int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
+
+        //mMood Management
         mMood = new Mood(counter, userComment, mDate);
+
+        //END\| mMood Management
+
+
 
         //Date management
         Date now = new Date();
@@ -72,16 +73,13 @@ public class MainActivity extends AppCompatActivity
 
         mMood.setDate(mDate);
 
-        System.out.println(mDate);
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(PREF_KEY_DATE, mDate).apply();
         //END\\ Date management
 
         //Counter management
-        mPreferences = getSharedPreferences(PREF_KEY_COUNTER, MODE_PRIVATE);
-        int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-
         if (previousCounter != 0)
         {
-
             counter = previousCounter;
         }
         //END\\ Counter management
@@ -179,32 +177,24 @@ public class MainActivity extends AppCompatActivity
                                 if (userComment != null)
                                 {
                                     mPreferences = getSharedPreferences(PREF_KEY_COMMENT, MODE_PRIVATE);
-                                    String fromJsonCommentList = mPreferences.getString(PREF_KEY_COMMENT, null);
-                                    if (null == fromJsonCommentList)
-                                    {
-                                        ArrayList<String> commentList = new ArrayList();
-                                        commentList.add(userComment);
+                                    String previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
 
-                                        Gson gson2 = new Gson();
-                                        String jsonCommentList = gson2.toJson(commentList);
+                                    if (null == previousUserComment)
+                                    {
+                                        String firsUserComment = userComment;
 
                                         SharedPreferences.Editor editor = mPreferences.edit();
-                                        editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+                                        editor.putString(PREF_KEY_COMMENT, firsUserComment).apply();
+
+                                        mMood.setComment(userComment);
                                     } else
                                     {
-                                        Gson gson = new Gson();
-                                        ArrayList<String> commentList2 = gson.fromJson(fromJsonCommentList, new TypeToken<ArrayList<String>>()
-                                        {
-                                        }.getType());
-
-                                        commentList2.remove(0);
-                                        commentList2.add(userComment);
-
-                                        Gson gson3 = new Gson();
-                                        String jsonCommentList = gson3.toJson(commentList2);
+                                        previousUserComment = userComment;
 
                                         SharedPreferences.Editor editor = mPreferences.edit();
-                                        editor.putString(PREF_KEY_COMMENT, jsonCommentList).apply();
+                                        editor.putString(PREF_KEY_COMMENT, previousUserComment).apply();
+
+                                        mMood.setComment(userComment);
                                     }
                                 }
                             }
