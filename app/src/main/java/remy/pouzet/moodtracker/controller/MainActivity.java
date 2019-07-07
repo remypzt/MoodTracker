@@ -252,8 +252,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent historicActivity = new Intent(MainActivity.this, HistoricActivity.class);
-                startActivity(historicActivity);
+                Intent HistoricActivity = new Intent(MainActivity.this, HistoricActivity.class);
+                startActivity(HistoricActivity);
             }
         });
         //END\\ Historic button management
