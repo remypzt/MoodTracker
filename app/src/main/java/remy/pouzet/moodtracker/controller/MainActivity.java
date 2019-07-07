@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
-    private EditText mCommentInput;
 
     private String userComment;
     private String mDate;
@@ -64,8 +63,6 @@ public class MainActivity extends AppCompatActivity
         String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
 
         String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-
-
         //END\|mPreferences management
 
         //mMood Management
@@ -111,14 +108,16 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             }
+            counter = 0;
+            previousUserComment[0] = null;
         }
-        //END\|
-        // if it's new day, then save previous mood
+        //END\| if it's new day, then save previous mood
         mMood.setDate(mDate);
 
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(PREF_KEY_DATE, mDate).apply();
         //END\\ Date management
+
 
         //Counter management
         if (previousCounter != 0)
@@ -248,7 +247,6 @@ public class MainActivity extends AppCompatActivity
 
         // Historic button management
         historic.setOnClickListener(new View.OnClickListener()
-
         {
             @Override
             public void onClick(View v)
