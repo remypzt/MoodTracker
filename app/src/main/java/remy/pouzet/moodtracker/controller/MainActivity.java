@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             }
             counter = 0;
+            previousCounter = 0;
             previousUserComment[0] = null;
         }
         //END\| if it's new day, then save previous mood
