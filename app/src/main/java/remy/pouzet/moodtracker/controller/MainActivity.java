@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
+
     private MediaPlayer mMediaPlayer;
 
     private String userComment;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.clac);
+        this.mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.clak);
 
         mContraintLayout = findViewById(R.id.constraintLayout);
         mSmiley = findViewById(R.id.smileyView);
@@ -170,12 +171,13 @@ public class MainActivity extends AppCompatActivity
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
 
                 }
-                mMediaPlayer.start();
+
                 // Counter saving
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
                 //END\\ Counter saving
 
+                mMediaPlayer.start();
                 mMood.setCounter(counter);
             }
 
@@ -192,6 +194,7 @@ public class MainActivity extends AppCompatActivity
                     counter = 0;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+
                 }
                 //Counter saving
                 SharedPreferences.Editor editor = mPreferences.edit();
@@ -200,6 +203,7 @@ public class MainActivity extends AppCompatActivity
 
                 mMood.setCounter(counter);
                 mMediaPlayer.start();
+
             }
         });
         //END\\ Display Mood and swipe management
@@ -266,4 +270,5 @@ public class MainActivity extends AppCompatActivity
         });
         //END\\ Historic button management
     }
+
 }
