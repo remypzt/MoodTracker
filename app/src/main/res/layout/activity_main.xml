@@ -46,5 +46,16 @@
         app:layout_constraintVertical_bias="0.95"
         app:srcCompat="@mipmap/ic_history_black" />
 
+    <Button
+        android:id="@+id/buttonshare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="648dp"
+
+        />
+
 </android.support.constraint.ConstraintLayout>
 

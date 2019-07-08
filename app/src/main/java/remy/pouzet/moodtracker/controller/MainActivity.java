@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     private String userComment;
     private String mDate;
 
+    private Button mButton;
+
     private SharedPreferences mPreferences;
     private Mood mMood;
 
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity
         mSmiley = findViewById(R.id.smileyView);
         ImageView comment = findViewById(R.id.commentLogoView);
         ImageView historic = findViewById(R.id.historicAcessLogoView);
+        Button mButton = findViewById(R.id.buttonshare);
 
         //mPreferences management
         mPreferences = getPreferences(MODE_PRIVATE);
@@ -131,6 +135,22 @@ public class MainActivity extends AppCompatActivity
             counter = previousCounter;
         }
         //END\\ Counter management
+
+        //Share
+        mButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent myIntent = new Intent(Intent.ACTION_SEND);
+                myIntent.setType("Text");
+                String shareBody = "body";
+                String shareSub = "Subject";
+                myIntent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
+                myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(myIntent, "share using"));
+            }
+        });
 
 
         // Display Mood and swipe management
