@@ -49,14 +49,13 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mPreferences;
     private Mood mMood;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        this.mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.clak);
 
         mContraintLayout = findViewById(R.id.constraintLayout);
         mSmiley = findViewById(R.id.smileyView);
@@ -68,8 +67,10 @@ public class MainActivity extends AppCompatActivity
         mPreferences = getPreferences(MODE_PRIVATE);
 
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-        final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
+
         String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+
+        final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
 
         String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
         //END\|mPreferences management
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         }
         //END\\ Counter management
 
-        //Share
+        //Share button
         mButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -146,11 +147,48 @@ public class MainActivity extends AppCompatActivity
                 myIntent.setType("Text");
                 String shareBody = "body";
                 String shareSub = "Subject";
+                /*alert action  sms email*/
                 myIntent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
                 myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(myIntent, "share using"));
             }
         });
+        //END\| Share button
+
+        // Sound
+
+        final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
+        mMediaPlayer.start();
+
+
+        /*String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
+        final MediaPlayer mMediaPlayer= new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try
+        {
+            mMediaPlayer.setDataSource(url);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
+            mMediaPlayer.prepare();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        mMediaPlayer.start();*/
+
+        /*try
+        {
+            mMediaPlayer.setDataSource("http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3");
+            mMediaPlayer.prepare();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }*/
+        //END\| Sound
 
 
         // Display Mood and swipe management
@@ -183,15 +221,12 @@ public class MainActivity extends AppCompatActivity
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
 
-
                 } else
                 {
                     counter = 4;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
-
                 }
-
                 // Counter saving
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
@@ -223,7 +258,6 @@ public class MainActivity extends AppCompatActivity
 
                 mMood.setCounter(counter);
                 mMediaPlayer.start();
-
             }
         });
         //END\\ Display Mood and swipe management
