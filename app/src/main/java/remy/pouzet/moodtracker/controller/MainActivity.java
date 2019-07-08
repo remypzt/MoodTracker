@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
+    private MediaPlayer mMediaPlayer;
 
     private String userComment;
     private String mDate;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.clac);
 
         mContraintLayout = findViewById(R.id.constraintLayout);
         mSmiley = findViewById(R.id.smileyView);
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity
         Date now = new Date();
 
         DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        String mDate = dateformatter.format(now);
+        final String mDate = dateformatter.format(now);
 
         // if it's new day, then save previous mood
         if (!mDate.equals(previousDate))
@@ -164,7 +168,9 @@ public class MainActivity extends AppCompatActivity
                     counter = 4;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+
                 }
+                mMediaPlayer.start();
                 // Counter saving
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
@@ -180,6 +186,7 @@ public class MainActivity extends AppCompatActivity
                     counter++;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+
                 } else
                 {
                     counter = 0;
@@ -192,6 +199,7 @@ public class MainActivity extends AppCompatActivity
                 //END\\ Counter saving
 
                 mMood.setCounter(counter);
+                mMediaPlayer.start();
             }
         });
         //END\\ Display Mood and swipe management

@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,6 +17,7 @@ import remy.pouzet.moodtracker.model.Mood;
 /**
  * Created by Remy Pouzet on 29/06/2019.
  */
+
 public class HistoricActivity extends AppCompatActivity
 {
 
@@ -38,13 +37,18 @@ public class HistoricActivity extends AppCompatActivity
         ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {
         }.getType());
+
+       /* List<GridViewItem> gridViewItemList = new ArrayList<>();
+
+
         //END\| Get moods
 
-        final GridView gridView = (GridView) findViewById(R.id.gridView);
+       /* GridView gridView = (GridView) findViewById(R.id.gridview);
+        gridView.setAdapter(new GridAdaptater());
 
-        ArrayAdapter<Mood> arrayAdapter = new ArrayAdapter<Mood>(this, android.R.layout.simple_list_item_1, moods);
+        /*ArrayAdapter<Mood> arrayAdapter = new ArrayAdapter<Mood>(this, android.R.layout.simple_list_item_1, moods);
 
-        gridView.setAdapter(arrayAdapter);
+        gridView.setAdapter(arrayAdapter);*/
 
 
     }
@@ -55,4 +59,5 @@ public class HistoricActivity extends AppCompatActivity
         super.onStart();
 
     }
+
 }
