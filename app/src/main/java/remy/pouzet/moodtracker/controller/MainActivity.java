@@ -4,8 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +22,8 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     private Mood mMood;
 
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -58,10 +64,27 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mContraintLayout = findViewById(R.id.constraintLayout);
-        mSmiley = findViewById(R.id.smileyView);
         ImageView comment = findViewById(R.id.commentLogoView);
         ImageView historic = findViewById(R.id.historicAcessLogoView);
         Button mButton = findViewById(R.id.buttonshare);
+        mSmiley = findViewById(R.id.smileyView);
+
+        //get and compress Smiley for sharing mood
+        mSmiley.setDrawingCacheEnabled(true);
+        Bitmap bitmap = mSmiley.getDrawingCache();
+        File root = Environment.getExternalStorageDirectory();
+        final File cachePath = new File(root.getAbsolutePath() + "/DCIM/Camera/image.jpg");
+        try
+        {
+            cachePath.createNewFile();
+            FileOutputStream ostream = new FileOutputStream(cachePath);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+            ostream.close();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
         //mPreferences management
         mPreferences = getPreferences(MODE_PRIVATE);
@@ -151,29 +174,10 @@ public class MainActivity extends AppCompatActivity
         }
         //END\\ Counter management
 
-        //Share button
-        mButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent myIntent = new Intent(Intent.ACTION_SEND);
-                myIntent.setType("Text");
-                String shareBody = "body";
-                String shareSub = "Subject";
-                /*alert action  sms email*/
-                myIntent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
-                myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(myIntent, "share using"));
-            }
-        });
-        //END\| Share button
+
 
         // Sound
-
         final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
-        mMediaPlayer.start();
-
 
         /*String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
         final MediaPlayer mMediaPlayer= new MediaPlayer();
@@ -196,7 +200,8 @@ public class MainActivity extends AppCompatActivity
 
         /*try
         {
-            mMediaPlayer.setDataSource("http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3");
+            String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
+            mMediaPlayer.setDataSource(url);
             mMediaPlayer.prepare();
         } catch (IOException e)
         {
@@ -275,6 +280,25 @@ public class MainActivity extends AppCompatActivity
             }
         });
         //END\\ Display Mood and swipe management
+
+
+        //Share button
+        mButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("image/*");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_STREAM, Uri.fromFile(cachePath));
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My mood");
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+        });
+        //END\| Share button
 
 
         // Comment button management
