@@ -45,12 +45,10 @@ public class MainActivity extends AppCompatActivity
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
 
-    private MediaPlayer mMediaPlayer;
+    /*private MediaPlayer mMediaPlayer;*/
 
     private String userComment;
     private String mDate;
-
-    private Button mButton;
 
     private SharedPreferences mPreferences;
     private Mood mMood;
@@ -318,7 +316,8 @@ public class MainActivity extends AppCompatActivity
 
                             public void onClick(DialogInterface dialog, int id)
                             {
-                                EditText mCommentInput = (EditText) ((AlertDialog) dialog).findViewById(R.id.comment);
+                                EditText mCommentInput = ((AlertDialog) dialog).findViewById(R.id.comment);
+                                assert mCommentInput != null;
                                 String userComment = mCommentInput.getText().toString();
 
                                 if (userComment.length() != 0)
