@@ -33,26 +33,19 @@ import remy.pouzet.moodtracker.model.Mood;
 import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 
 public class MainActivity extends AppCompatActivity
-
 {
     public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
     public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
-
     int counter = 0;
-
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
-
-    /*private MediaPlayer mMediaPlayer;*/
-
     private String userComment;
     private String mDate;
-
     private SharedPreferences mPreferences;
+    /*private MediaPlayer mMediaPlayer;*/
     private Mood mMood;
-
 
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
@@ -61,11 +54,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //FID
         mContraintLayout = findViewById(R.id.constraintLayout);
         ImageView comment = findViewById(R.id.commentLogoView);
         ImageView historic = findViewById(R.id.historicAcessLogoView);
         Button mButton = findViewById(R.id.buttonshare);
         mSmiley = findViewById(R.id.smileyView);
+        //END\|FID
 
         //get and compress Smiley for sharing mood
         mSmiley.setDrawingCacheEnabled(true);
@@ -82,35 +77,27 @@ public class MainActivity extends AppCompatActivity
         {
             e.printStackTrace();
         }
-
+        //END\|get and compress Smiley for sharing mood
 
         //mPreferences management
         mPreferences = getPreferences(MODE_PRIVATE);
-
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-
         String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
-
         final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
-
         String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
         //END\|mPreferences management
 
         //mMood Management
         mMood = new Mood(counter, userComment, mDate);
-
         counter = previousCounter;
         userComment = previousUserComment[0];
         mDate = previousDate;
         //END\| mMood Management
 
-
         //Date management
         Date now = new Date();
-
         DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
         final String mDate = dateformatter.format(now);
-
         // if it's new day, then save previous mood
         if (!mDate.equals(previousDate))
         {
@@ -159,11 +146,9 @@ public class MainActivity extends AppCompatActivity
         }
         //END\| if it's new day, then save previous mood
         mMood.setDate(mDate);
-
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(PREF_KEY_DATE, mDate).apply();
         //END\\ Date management
-
 
         //Counter management
         if (previousCounter != 0)
@@ -172,11 +157,8 @@ public class MainActivity extends AppCompatActivity
         }
         //END\\ Counter management
 
-
-
         // Sound
         final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
-
         /*String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
         final MediaPlayer mMediaPlayer= new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -207,7 +189,6 @@ public class MainActivity extends AppCompatActivity
         }*/
         //END\| Sound
 
-
         // Display Mood and swipe management
         final int[] arraySmileys = new int[]{
                 R.mipmap.smiley_happy,
@@ -216,7 +197,6 @@ public class MainActivity extends AppCompatActivity
                 R.mipmap.smiley_sad,
                 R.mipmap.smiley_super_happy,
         };
-
         final int[] arrayBackgroundColors = new int[]{
                 R.color.light_sage,
                 R.color.cornflower_blue_65,
@@ -224,10 +204,8 @@ public class MainActivity extends AppCompatActivity
                 R.color.faded_red,
                 R.color.banana_yellow,
         };
-
         mSmiley.setImageResource(arraySmileys[counter]);
         mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
-
         mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
             public void onSwipeTop()
@@ -237,7 +215,6 @@ public class MainActivity extends AppCompatActivity
                     counter--;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
-
                 } else
                 {
                     counter = 4;
@@ -260,13 +237,11 @@ public class MainActivity extends AppCompatActivity
                     counter++;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
-
                 } else
                 {
                     counter = 0;
                     mSmiley.setImageResource(arraySmileys[counter]);
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
-
                 }
                 //Counter saving
                 SharedPreferences.Editor editor = mPreferences.edit();
@@ -278,7 +253,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
         //END\\ Display Mood and swipe management
-
 
         //Share button
         mButton.setOnClickListener(new View.OnClickListener()
@@ -298,7 +272,6 @@ public class MainActivity extends AppCompatActivity
         });
         //END\| Share button
 
-
         // Comment button management
         comment.setOnClickListener(new View.OnClickListener()
         {
@@ -312,7 +285,6 @@ public class MainActivity extends AppCompatActivity
                         {// positive button : Validation and save comment management
                             // Comment management : if there is already an comment , replace it by this one,
                             // else create ArrayListComment
-
                             public void onClick(DialogInterface dialog, int id)
                             {
                                 EditText mCommentInput = ((AlertDialog) dialog).findViewById(R.id.comment);
@@ -347,7 +319,6 @@ public class MainActivity extends AppCompatActivity
         });
         //END\\ Comment button management
 
-
         // Historic button management
         historic.setOnClickListener(new View.OnClickListener()
         {
@@ -360,5 +331,4 @@ public class MainActivity extends AppCompatActivity
         });
         //END\\ Historic button management
     }
-
 }
