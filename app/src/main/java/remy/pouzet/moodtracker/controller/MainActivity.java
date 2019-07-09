@@ -300,7 +300,6 @@ public class MainActivity extends AppCompatActivity
 
 
         // Comment button management
-        // TODO : fix mCommentInput bug
         comment.setOnClickListener(new View.OnClickListener()
         {
             @Override
