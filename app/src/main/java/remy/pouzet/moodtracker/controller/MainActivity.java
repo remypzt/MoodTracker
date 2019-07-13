@@ -38,7 +38,12 @@ public class MainActivity extends AppCompatActivity
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
     public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
+    public static final String PREF_KEY_MOOD1 = "PREF_KEY_MOOD1";
+    public static final String PREF_KEY_INDEX = "PREF_KEY_INDEX";
+
     int counter = 0;
+    int mIndex = 0;
+
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private String userComment;
@@ -80,82 +85,82 @@ public class MainActivity extends AppCompatActivity
         //END\|get and compress Smiley for sharing mood
 
         //mPreferences management
-        mPreferences = getPreferences(MODE_PRIVATE);
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD1, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
         String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
         final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        int previousIndex = mPreferences.getInt(PREF_KEY_INDEX, 0);
         //END\|mPreferences management
 
         //mMood Management
-        mMood = new Mood(counter, userComment, mDate);
+        mMood = new Mood(counter, userComment, mDate, mIndex);
         counter = previousCounter;
         userComment = previousUserComment[0];
-        mDate = previousDate;
+        mIndex = previousIndex;
         //END\| mMood Management
 
-        //Date management
+        //Date management : if it's new day, then save previous mood
         Date now = new Date();
         DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
         final String mDate = dateformatter.format(now);
-        // if it's new day, then save previous mood
         if (!mDate.equals(previousDate))
         {
-            ArrayList<Mood> moods1 = new ArrayList<>();
-            moods1.add(mMood);
+            String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD1, null);
+            Gson gson1 = new Gson();
+            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+            {
+            }.getType());
+
             if (fromJsonMoods == null)
             {
+                ArrayList<Mood> moods1 = new ArrayList<>();
+                mIndex = 0;
+                SharedPreferences.Editor editor1 = mPreferences.edit();
+                editor1.putInt(PREF_KEY_INDEX, mIndex).apply();
+                mMood.setIndex(mIndex);
+                mMood.setDate(mDate);
+                moods1.add(mMood);
                 Gson gson = new Gson();
                 String jsonMoods = gson.toJson(moods1);
-
                 SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            } else if (moods1.size() != 7)
+                editor.putString(PREF_KEY_MOOD1, jsonMoods).apply();
+            } else if (moods.size() != 7)
             {
-                Gson gson1 = new Gson();
-                ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-                {
-                }.getType());
-
+                mIndex = moods.size() - 1;
+                SharedPreferences.Editor editor1 = mPreferences.edit();
+                editor1.putInt(PREF_KEY_INDEX, mIndex).apply();
+                mMood.setIndex(mIndex);
+                mMood.setDate(mDate);
                 moods.add(mMood);
-
                 Gson gson = new Gson();
                 String jsonMoods = gson.toJson(moods);
-
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             } else // moods max size = 7
             {
-                Gson gson2 = new Gson();
-                ArrayList<Mood> moods = gson2.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-                {
-                }.getType());
-
                 moods.remove(0);
+                mIndex = 0;
+                SharedPreferences.Editor editor1 = mPreferences.edit();
+                editor1.putInt(PREF_KEY_INDEX, mIndex).apply();
+                mMood.setIndex(mIndex);
+                mMood.setDate(mDate);
                 moods.add(mMood);
-
                 Gson gson = new Gson();
                 String jsonMoods = gson.toJson(moods);
-
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             }//END\| moods max size = 7
-            counter = 0;
-            previousCounter = 0;
+            /*counter = 0;
+            SharedPreferences.Editor editor = mPreferences.edit();
+            editor.putInt(PREF_KEY_COUNTER, counter).apply();*/
             previousUserComment[0] = null;
         }
-        //END\| if it's new day, then save previous mood
         mMood.setDate(mDate);
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(PREF_KEY_DATE, mDate).apply();
-        //END\\ Date management
+        //END\\ Date management : if it's new day, then save previous mood
 
-        //Counter management
-        if (previousCounter != 0)
-        {
-            counter = previousCounter;
-        }
-        //END\\ Counter management
 
         // Sound
         final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
@@ -225,7 +230,6 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
                 //END\\ Counter saving
-
                 mMediaPlayer.start();
                 mMood.setCounter(counter);
             }
@@ -247,7 +251,6 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences.Editor editor = mPreferences.edit();
                 editor.putInt(PREF_KEY_COUNTER, counter).apply();
                 //END\\ Counter saving
-
                 mMood.setCounter(counter);
                 mMediaPlayer.start();
             }
@@ -293,12 +296,9 @@ public class MainActivity extends AppCompatActivity
 
                                 if (userComment.length() != 0)
                                 {
-
                                     previousUserComment[0] = userComment;
-
                                     SharedPreferences.Editor editor = mPreferences.edit();
                                     editor.putString(PREF_KEY_COMMENT, previousUserComment[0]).apply();
-
                                     mMood.setComment(userComment);
                                 } else
                                 {

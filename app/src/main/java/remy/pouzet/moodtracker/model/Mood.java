@@ -1,7 +1,5 @@
 package remy.pouzet.moodtracker.model;
 
-import java.util.Date;
-
 /**
  * Created by Remy Pouzet on 29/06/2019.
  */
@@ -12,12 +10,14 @@ public class Mood
     private int mCounter;
     private String mComment;
     private String mDate;
+    private int mIndex;
 
-    public Mood(int counter, String comment, String date)
+    public Mood(int counter, String comment, String date, int index)
     {
         mCounter = counter;
         mComment = comment;
         mDate = date;
+        mIndex = index;
     }
 
 
@@ -49,5 +49,15 @@ public class Mood
     public void setDate(String date)
     {
         mDate = date;
+    }
+
+    public int getIndex()
+    {
+        return mIndex;
+    }
+
+    public void setIndex(int index)
+    {
+        mIndex = index;
     }
 }
