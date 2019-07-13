@@ -136,7 +136,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(1).getComment() != null)
                 {
                     baners.get(1).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(0).setForegroundGravity(21);
+                    baners.get(1).setForegroundGravity(21);
 
                     baners.get(1).setOnClickListener(new View.OnClickListener()
                     {
@@ -180,7 +180,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(2).getComment() != null)
                 {
                     baners.get(2).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(0).setForegroundGravity(21);
+                    baners.get(2).setForegroundGravity(21);
 
                     baners.get(2).setOnClickListener(new View.OnClickListener()
                     {
@@ -225,7 +225,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(3).getComment() != null)
                 {
                     baners.get(3).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(0).setForegroundGravity(21);
+                    baners.get(3).setForegroundGravity(21);
                 }
                 baners.get(3).setOnClickListener(new View.OnClickListener()
                 {
@@ -268,7 +268,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(4).getComment() != null)
                 {
                     baners.get(4).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(0).setForegroundGravity(21);
+                    baners.get(4).setForegroundGravity(21);
 
                     baners.get(4).setOnClickListener(new View.OnClickListener()
                     {
@@ -312,7 +312,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(5).getComment() != null)
                 {
                     baners.get(5).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(0).setForegroundGravity(21);
+                    baners.get(5).setForegroundGravity(21);
 
                     baners.get(5).setOnClickListener(new View.OnClickListener()
                     {
@@ -356,7 +356,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(6).getComment() != null)
                 {
                     baners.get(6).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(0).setForegroundGravity(21);
+                    baners.get(6).setForegroundGravity(21);
 
                     baners.get(6).setOnClickListener(new View.OnClickListener()
                     {
