@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -261,7 +262,8 @@ public class HistoricActivity extends AppCompatActivity
                                 if (moods.get(4).getComment() != null)
                                 {
                                     baners.get(4).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                    baners.get(4).setForegroundGravity(21);
+                                    baners.get(4).setForegroundGravity(Gravity.AXIS_PULL_AFTER);
+
 
                                     baners.get(4).setOnClickListener(new View.OnClickListener()
                                     {
@@ -272,7 +274,6 @@ public class HistoricActivity extends AppCompatActivity
                                         }
                                     });
                                 }
-
                                 if (moods.size() >= 6)
                                 {
                                     baners.get(5).setText(moods.get(5).getDate());

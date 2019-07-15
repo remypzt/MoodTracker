@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 
         //Date management : if it's new day, then save previous mood
         Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.LONG);
         final String mDate = dateformatter.format(now);
         if (!mDate.equals(previousDate))
         {
