@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity
 
         // Sound
         final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
+
         /*String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
         final MediaPlayer mMediaPlayer= new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
