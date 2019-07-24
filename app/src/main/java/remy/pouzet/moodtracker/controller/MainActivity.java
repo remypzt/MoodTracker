@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         //mPreferences management
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-        String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+        final String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
         final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
         int previousIndex = mPreferences.getInt(PREF_KEY_INDEX, 0);
         //END\|mPreferences management
@@ -100,99 +100,14 @@ public class MainActivity extends AppCompatActivity
 
         //Date management : if it's new day, then save previous mood
         Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.LONG);
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
         final String mDate = dateformatter.format(now);
-        if (!mDate.equals(previousDate))
-        {
-            String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-            Gson gson1 = new Gson();
-            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-            {
-            }.getType());
 
-            if (null == fromJsonMoods)
-            {
-                ArrayList<Mood> moods1 = new ArrayList<>();
-
-                mIndex = 0;
-                SharedPreferences.Editor editor1 = mPreferences.edit();
-                editor1.putInt(PREF_KEY_INDEX, mIndex).apply();
-                mMood.setIndex(mIndex);
-                mMood.setDate(mDate);
-
-                moods1.add(mMood);
-                Gson gson = new Gson();
-                String jsonMoods = gson.toJson(moods1);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            } else if (moods.size() != 7)
-            {
-                mIndex = moods.size() - 1;
-                SharedPreferences.Editor editor1 = mPreferences.edit();
-                editor1.putInt(PREF_KEY_INDEX, mIndex).apply();
-                mMood.setIndex(mIndex);
-                mMood.setDate(mDate);
-
-                moods.add(mMood);
-                Gson gson = new Gson();
-                String jsonMoods = gson.toJson(moods);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            } else // moods max size = 7
-            {
-                moods.remove(0);
-                mIndex = 0;
-                SharedPreferences.Editor editor1 = mPreferences.edit();
-                editor1.putInt(PREF_KEY_INDEX, mIndex).apply();
-                mMood.setIndex(mIndex);
-                mMood.setDate(mDate);
-                moods.add(mMood);
-                Gson gson = new Gson();
-                String jsonMoods = gson.toJson(moods);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            }//END\| moods max size = 7
-            counter = 0;
-            SharedPreferences.Editor editor = mPreferences.edit();
-            editor.putInt(PREF_KEY_COUNTER, counter).apply();
-            previousUserComment[0] = null;
-        }
-        mMood.setDate(mDate);
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(PREF_KEY_DATE, mDate).apply();
         //END\\ Date management : if it's new day, then save previous mood
 
 
         // Sound
         final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
-        /*String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
-        final MediaPlayer mMediaPlayer= new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try
-        {
-            mMediaPlayer.setDataSource(url);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        try
-        {
-            mMediaPlayer.prepare();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        mMediaPlayer.start();*/
-
-        /*try
-        {
-            String url = "http://s1download-universal-soundbank.com/mp3/sounds/13971.mp3";
-            mMediaPlayer.setDataSource(url);
-            mMediaPlayer.prepare();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }*/
         //END\| Sound
 
         // Display Mood and swipe management
@@ -214,6 +129,7 @@ public class MainActivity extends AppCompatActivity
         mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
         mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
+
             public void onSwipeTop()
             {
                 if (counter > 0)
@@ -228,11 +144,93 @@ public class MainActivity extends AppCompatActivity
                     mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
                 }
                 // Counter saving
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putInt(PREF_KEY_COUNTER, counter).apply();
+                SharedPreferences.Editor editor1 = mPreferences.edit();
+                editor1.putInt(PREF_KEY_COUNTER, counter).apply();
                 //END\\ Counter saving
                 mMediaPlayer.start();
                 mMood.setCounter(counter);
+
+                if (!mDate.equals(previousDate))
+                {
+                    String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+                    Gson gson1 = new Gson();
+                    ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+                    {
+                    }.getType());
+
+                    if (null == fromJsonMoods)
+                    {
+                        ArrayList<Mood> moods1 = new ArrayList<>();
+
+                        mIndex = 0;
+                        SharedPreferences.Editor editor = mPreferences.edit();
+                        editor.putInt(PREF_KEY_INDEX, mIndex).apply();
+                        mMood.setIndex(mIndex);
+                        mMood.setDate(mDate);
+
+                        moods1.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods1);
+                        SharedPreferences.Editor editor2 = mPreferences.edit();
+                        editor2.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    } else if (moods.size() != 7)
+                    {
+                        mIndex = moods.size() - 1;
+                        SharedPreferences.Editor editor = mPreferences.edit();
+                        editor.putInt(PREF_KEY_INDEX, mIndex).apply();
+                        mMood.setIndex(mIndex);
+                        mMood.setDate(mDate);
+
+                        moods.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods);
+                        SharedPreferences.Editor editor2 = mPreferences.edit();
+                        editor2.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    } else // moods max size = 7
+                    {
+                        moods.remove(0);
+                        mIndex = 0;
+                        SharedPreferences.Editor editor = mPreferences.edit();
+                        editor.putInt(PREF_KEY_INDEX, mIndex).apply();
+                        mMood.setIndex(mIndex);
+                        mMood.setDate(mDate);
+                        moods.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods);
+                        SharedPreferences.Editor editor2 = mPreferences.edit();
+                        editor2.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    }//END\| moods max size = 7
+                    counter = 0;
+                    SharedPreferences.Editor editor = mPreferences.edit();
+                    editor.putInt(PREF_KEY_COUNTER, counter).apply();
+                    previousUserComment[0] = null;
+                } else
+                {
+                    String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+                    Gson gson1 = new Gson();
+                    ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+                    {
+                    }.getType());
+
+
+                    if (null != fromJsonMoods)
+                    {
+                        int size = moods.size();
+                        System.out.println(size);
+                        moods.remove(size);
+                        mMood.setDate(mDate);
+                        moods.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods);
+                        SharedPreferences.Editor editor4 = mPreferences.edit();
+                        editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
+
+                        
+                    }
+                }
+                mMood.setDate(mDate);
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putString(PREF_KEY_DATE, mDate).apply();
             }
 
             public void onSwipeBottom()
@@ -254,6 +252,84 @@ public class MainActivity extends AppCompatActivity
                 //END\\ Counter saving
                 mMood.setCounter(counter);
                 mMediaPlayer.start();
+
+                if (!mDate.equals(previousDate))
+                {
+                    String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+                    Gson gson1 = new Gson();
+                    ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+                    {
+                    }.getType());
+
+                    if (null == fromJsonMoods)
+                    {
+                        ArrayList<Mood> moods1 = new ArrayList<>();
+
+                        mIndex = 0;
+                        SharedPreferences.Editor editor3 = mPreferences.edit();
+                        editor3.putInt(PREF_KEY_INDEX, mIndex).apply();
+                        mMood.setIndex(mIndex);
+                        mMood.setDate(mDate);
+
+                        moods1.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods1);
+                        SharedPreferences.Editor editor4 = mPreferences.edit();
+                        editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    } else if (moods.size() != 7)
+                    {
+                        mIndex = moods.size() - 1;
+                        SharedPreferences.Editor editor3 = mPreferences.edit();
+                        editor3.putInt(PREF_KEY_INDEX, mIndex).apply();
+                        mMood.setIndex(mIndex);
+                        mMood.setDate(mDate);
+
+                        moods.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods);
+                        SharedPreferences.Editor editor4 = mPreferences.edit();
+                        editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    } else // moods max size = 7
+                    {
+                        moods.remove(0);
+                        mIndex = 0;
+                        SharedPreferences.Editor editor3 = mPreferences.edit();
+                        editor3.putInt(PREF_KEY_INDEX, mIndex).apply();
+                        mMood.setIndex(mIndex);
+                        mMood.setDate(mDate);
+                        moods.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods);
+                        SharedPreferences.Editor editor4 = mPreferences.edit();
+                        editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    }//END\| moods max size = 7
+                    counter = 0;
+                    SharedPreferences.Editor editor5 = mPreferences.edit();
+                    editor5.putInt(PREF_KEY_COUNTER, counter).apply();
+                    previousUserComment[0] = null;
+                } else
+                {
+                    String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+                    Gson gson1 = new Gson();
+                    ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+                    {
+                    }.getType());
+
+                    if (null != fromJsonMoods)
+                    {
+                        int size = moods.size();
+                        moods.remove(size);
+                        mMood.setDate(mDate);
+                        moods.add(mMood);
+                        Gson gson = new Gson();
+                        String jsonMoods = gson.toJson(moods);
+                        SharedPreferences.Editor editor4 = mPreferences.edit();
+                        editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                    }
+                }
+                mMood.setDate(mDate);
+                SharedPreferences.Editor editor6 = mPreferences.edit();
+                editor6.putString(PREF_KEY_DATE, mDate).apply();
             }
         });
         //END\\ Display Mood and swipe management
