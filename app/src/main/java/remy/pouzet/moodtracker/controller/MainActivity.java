@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
     public static final String PREF_KEY_INDEX = "PREF_KEY_INDEX";
 
     int counter = 0;
-    int mIndex = 0;
+
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         //mPreferences management
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-        final String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+
         final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
         int previousIndex = mPreferences.getInt(PREF_KEY_INDEX, 0);
         //END\|mPreferences management
@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity
         //mMood Management
         counter = previousCounter;
         userComment = previousUserComment[0];
-        mIndex = previousIndex;
-        mMood = new Mood(counter, userComment, mDate, mIndex);
+
+        mMood = new Mood(counter, userComment, mDate);
         //END\| mMood Management
 
         //Date management : if it's new day, then save previous mood
@@ -132,6 +132,11 @@ public class MainActivity extends AppCompatActivity
 
             public void onSwipeTop()
             {
+                final String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+                Date now = new Date();
+                DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+                final String mDate = dateformatter.format(now);
+
                 if (counter > 0)
                 {
                     counter--;
@@ -162,10 +167,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         ArrayList<Mood> moods1 = new ArrayList<>();
 
-                        mIndex = 0;
-                        SharedPreferences.Editor editor = mPreferences.edit();
-                        editor.putInt(PREF_KEY_INDEX, mIndex).apply();
-                        mMood.setIndex(mIndex);
+
                         mMood.setDate(mDate);
 
                         moods1.add(mMood);
@@ -175,10 +177,7 @@ public class MainActivity extends AppCompatActivity
                         editor2.putString(PREF_KEY_MOOD, jsonMoods).apply();
                     } else if (moods.size() != 7)
                     {
-                        mIndex = moods.size() - 1;
-                        SharedPreferences.Editor editor = mPreferences.edit();
-                        editor.putInt(PREF_KEY_INDEX, mIndex).apply();
-                        mMood.setIndex(mIndex);
+
                         mMood.setDate(mDate);
 
                         moods.add(mMood);
@@ -189,10 +188,7 @@ public class MainActivity extends AppCompatActivity
                     } else // moods max size = 7
                     {
                         moods.remove(0);
-                        mIndex = 0;
-                        SharedPreferences.Editor editor = mPreferences.edit();
-                        editor.putInt(PREF_KEY_INDEX, mIndex).apply();
-                        mMood.setIndex(mIndex);
+
                         mMood.setDate(mDate);
                         moods.add(mMood);
                         Gson gson = new Gson();
@@ -200,9 +196,9 @@ public class MainActivity extends AppCompatActivity
                         SharedPreferences.Editor editor2 = mPreferences.edit();
                         editor2.putString(PREF_KEY_MOOD, jsonMoods).apply();
                     }//END\| moods max size = 7
-                    counter = 0;
+                    /*counter = 0;
                     SharedPreferences.Editor editor = mPreferences.edit();
-                    editor.putInt(PREF_KEY_COUNTER, counter).apply();
+                    editor.putInt(PREF_KEY_COUNTER, counter).apply();*/
                     previousUserComment[0] = null;
                 } else
                 {
@@ -212,20 +208,17 @@ public class MainActivity extends AppCompatActivity
                     {
                     }.getType());
 
-
                     if (null != fromJsonMoods)
                     {
                         int size = moods.size();
-                        System.out.println(size);
-                        moods.remove(size);
+
+                        moods.remove(size - 1);
                         mMood.setDate(mDate);
                         moods.add(mMood);
                         Gson gson = new Gson();
                         String jsonMoods = gson.toJson(moods);
                         SharedPreferences.Editor editor4 = mPreferences.edit();
                         editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
-
-                        
                     }
                 }
                 mMood.setDate(mDate);
@@ -235,6 +228,12 @@ public class MainActivity extends AppCompatActivity
 
             public void onSwipeBottom()
             {
+                final String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+                Date now = new Date();
+                DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+                final String mDate = dateformatter.format(now);
+
+
                 if (counter < 4)
                 {
                     counter++;
@@ -265,10 +264,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         ArrayList<Mood> moods1 = new ArrayList<>();
 
-                        mIndex = 0;
-                        SharedPreferences.Editor editor3 = mPreferences.edit();
-                        editor3.putInt(PREF_KEY_INDEX, mIndex).apply();
-                        mMood.setIndex(mIndex);
+
                         mMood.setDate(mDate);
 
                         moods1.add(mMood);
@@ -278,10 +274,8 @@ public class MainActivity extends AppCompatActivity
                         editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
                     } else if (moods.size() != 7)
                     {
-                        mIndex = moods.size() - 1;
-                        SharedPreferences.Editor editor3 = mPreferences.edit();
-                        editor3.putInt(PREF_KEY_INDEX, mIndex).apply();
-                        mMood.setIndex(mIndex);
+
+
                         mMood.setDate(mDate);
 
                         moods.add(mMood);
@@ -292,10 +286,7 @@ public class MainActivity extends AppCompatActivity
                     } else // moods max size = 7
                     {
                         moods.remove(0);
-                        mIndex = 0;
-                        SharedPreferences.Editor editor3 = mPreferences.edit();
-                        editor3.putInt(PREF_KEY_INDEX, mIndex).apply();
-                        mMood.setIndex(mIndex);
+
                         mMood.setDate(mDate);
                         moods.add(mMood);
                         Gson gson = new Gson();
@@ -303,9 +294,9 @@ public class MainActivity extends AppCompatActivity
                         SharedPreferences.Editor editor4 = mPreferences.edit();
                         editor4.putString(PREF_KEY_MOOD, jsonMoods).apply();
                     }//END\| moods max size = 7
-                    counter = 0;
+                   /* counter = 0;
                     SharedPreferences.Editor editor5 = mPreferences.edit();
-                    editor5.putInt(PREF_KEY_COUNTER, counter).apply();
+                    editor5.putInt(PREF_KEY_COUNTER, counter).apply();*/
                     previousUserComment[0] = null;
                 } else
                 {
@@ -318,7 +309,7 @@ public class MainActivity extends AppCompatActivity
                     if (null != fromJsonMoods)
                     {
                         int size = moods.size();
-                        moods.remove(size);
+                        moods.remove(size - 1);
                         mMood.setDate(mDate);
                         moods.add(mMood);
                         Gson gson = new Gson();
