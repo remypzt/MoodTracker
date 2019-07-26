@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
     public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
-    public static final String PREF_KEY_INDEX = "PREF_KEY_INDEX";
 
     int counter = 0;
 
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
 
         final String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
-        int previousIndex = mPreferences.getInt(PREF_KEY_INDEX, 0);
+      
         //END\|mPreferences management
 
         //mMood Management
