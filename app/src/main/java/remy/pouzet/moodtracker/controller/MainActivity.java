@@ -68,6 +68,11 @@ public class MainActivity extends AppCompatActivity
     String[] previousUserComment = {mPreferences != null ? mPreferences.getString(PREF_KEY_COMMENT, null) : null};
     String fromJsonMoods = mPreferences != null ? mPreferences.getString(PREF_KEY_MOOD, null) : null;
 
+    Gson gson = new Gson();
+    ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+    {
+    }.getType());
+
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -234,16 +239,11 @@ public class MainActivity extends AppCompatActivity
     {
         if (!mDate.equals(previousDate))
         {
-            Gson gson1 = new Gson();
-            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-            {
-            }.getType());
             if (null == fromJsonMoods)
             {
                 ArrayList<Mood> moods1 = new ArrayList<>();
                 mMood.setDate(mDate);
                 moods1.add(mMood);
-                Gson gson = new Gson();
                 String jsonMoods = gson.toJson(moods1);
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             } else if (moods.size() != 7)
@@ -259,17 +259,12 @@ public class MainActivity extends AppCompatActivity
             previousUserComment[0] = null;
         } else
         {
-            Gson gson1 = new Gson();
-            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-            {
-            }.getType());
             if (null != fromJsonMoods)
             {
                 int size = moods.size();
                 moods.remove(size - 1);
                 mMood.setDate(mDate);
                 moods.add(mMood);
-                Gson gson = new Gson();
                 String jsonMoods = gson.toJson(moods);
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             } else
@@ -277,7 +272,6 @@ public class MainActivity extends AppCompatActivity
                 ArrayList<Mood> moods1 = new ArrayList<>();
                 mMood.setDate(mDate);
                 moods1.add(mMood);
-                Gson gson = new Gson();
                 String jsonMoods = gson.toJson(moods1);
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             }
@@ -288,13 +282,8 @@ public class MainActivity extends AppCompatActivity
 
     private void saveMood()
     {
-        Gson gson1 = new Gson();
-        ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
         mMood.setDate(mDate);
         moods.add(mMood);
-        Gson gson = new Gson();
         String jsonMoods = gson.toJson(moods);
         editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
     }
