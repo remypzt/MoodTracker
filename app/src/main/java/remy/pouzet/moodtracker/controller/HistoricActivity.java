@@ -22,11 +22,9 @@ import java.util.Date;
 import remy.pouzet.moodtracker.R;
 import remy.pouzet.moodtracker.model.Mood;
 
-
 /**
  * Created by Remy Pouzet on 29/06/2019.
  */
-
 
 public class HistoricActivity extends AppCompatActivity
 {
@@ -83,7 +81,6 @@ public class HistoricActivity extends AppCompatActivity
 
         if (null != fromJsonMoods)
         {
-
             while (a + 1 <= moods.size() || moods.size() > 8)
             {
                 if (moods.get(a) != null)
@@ -114,7 +111,6 @@ public class HistoricActivity extends AppCompatActivity
                         resultCompare = "Il y a plus de 1 mois";
                     }
                     baners.get(a).setText(resultCompare);
-
 
                     switch (moods.get(a).getCounter())
                     {
@@ -159,9 +155,3 @@ public class HistoricActivity extends AppCompatActivity
         }
     }
 }
-
-
-
-
-
-

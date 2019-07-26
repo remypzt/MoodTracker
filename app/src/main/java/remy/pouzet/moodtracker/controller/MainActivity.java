@@ -39,88 +39,34 @@ public class MainActivity extends AppCompatActivity
     public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
 
-    int counter = 0;
+    int[] arraySmileys = new int[]{
+            R.mipmap.smiley_happy,
+            R.mipmap.smiley_normal,
+            R.mipmap.smiley_disappointed,
+            R.mipmap.smiley_sad,
+            R.mipmap.smiley_super_happy,
+    };
+    int[] arrayBackgroundColors = new int[]{
+            R.color.light_sage,
+            R.color.cornflower_blue_65,
+            R.color.warm_grey,
+            R.color.faded_red,
+            R.color.banana_yellow,
+    };
 
+    int counter = 0;
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private String userComment;
     private String mDate;
     private SharedPreferences mPreferences;
-
-    /*private MediaPlayer mMediaPlayer;*/
     private Mood mMood;
 
-    SharedPreferences.Editor editor = mPreferences.edit();
-    String previousDate = mPreferences.getString(PREF_KEY_DATE, null);
-    String[] previousUserComment = {mPreferences.getString(PREF_KEY_COMMENT, null)};
-
-    private void saveMood()
-    {
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        Gson gson1 = new Gson();
-        ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
-
-        mMood.setDate(mDate);
-        moods.add(mMood);
-        Gson gson = new Gson();
-        String jsonMoods = gson.toJson(moods);
-        editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-    }
-
-    private void checkDate()
-    {
-        if (!mDate.equals(previousDate))
-        {
-            String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-            Gson gson1 = new Gson();
-            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-            {
-            }.getType());
-            if (null == fromJsonMoods)
-            {
-                ArrayList<Mood> moods1 = new ArrayList<>();
-                mMood.setDate(mDate);
-                moods1.add(mMood);
-                Gson gson = new Gson();
-                String jsonMoods = gson.toJson(moods1);
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            } else if (moods.size() != 7)
-            {
-                saveMood();
-            } else // moods max size = 7
-            {
-                moods.remove(0);
-                saveMood();
-            }//END\| moods max size = 7
-            counter = 0;
-            editor.putInt(PREF_KEY_COUNTER, counter).apply();
-            previousUserComment[0] = null;
-        } else
-        {
-            String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-            Gson gson1 = new Gson();
-            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-            {
-            }.getType());
-
-            if (null != fromJsonMoods)
-            {
-                int size = moods.size();
-                moods.remove(size - 1);
-                mMood.setDate(mDate);
-                moods.add(mMood);
-                Gson gson = new Gson();
-                String jsonMoods = gson.toJson(moods);
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            }
-        }
-        mMood.setDate(mDate);
-        editor.putString(PREF_KEY_DATE, mDate).apply();
-    }
-
+    SharedPreferences.Editor editor = mPreferences != null ? mPreferences.edit() : null;
+    String previousDate = mPreferences != null ? mPreferences.getString(PREF_KEY_DATE, null) : null;
+    String[] previousUserComment = {mPreferences != null ? mPreferences.getString(PREF_KEY_COMMENT, null) : null};
+    String fromJsonMoods = mPreferences != null ? mPreferences.getString(PREF_KEY_MOOD, null) : null;
 
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
@@ -154,17 +100,10 @@ public class MainActivity extends AppCompatActivity
         }
         //END\|get and compress Smiley for sharing mood
 
-        //mPreferences management
-        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        int previousCounter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-
-
-        //END\|mPreferences management
-
         //mMood Management
-        counter = previousCounter;
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        counter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
         userComment = previousUserComment[0];
-
         mMood = new Mood(counter, userComment, mDate);
         //END\| mMood Management
 
@@ -172,84 +111,38 @@ public class MainActivity extends AppCompatActivity
         Date now = new Date();
         DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
         final String mDate = dateformatter.format(now);
-
         //END\\ Date management : if it's new day, then save previous mood
 
-
-        // Sound
-        final MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
-        //END\| Sound
-
         // Display Mood and swipe management
-        final int[] arraySmileys = new int[]{
-                R.mipmap.smiley_happy,
-                R.mipmap.smiley_normal,
-                R.mipmap.smiley_disappointed,
-                R.mipmap.smiley_sad,
-                R.mipmap.smiley_super_happy,
-        };
-        final int[] arrayBackgroundColors = new int[]{
-                R.color.light_sage,
-                R.color.cornflower_blue_65,
-                R.color.warm_grey,
-                R.color.faded_red,
-                R.color.banana_yellow,
-        };
-        mSmiley.setImageResource(arraySmileys[counter]);
-        mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+        displayingBehavior();
         mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
         {
-
             public void onSwipeTop()
             {
-                Date now = new Date();
-                DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-                final String mDate = dateformatter.format(now);
-
                 if (counter > 0)
                 {
                     counter--;
-                    mSmiley.setImageResource(arraySmileys[counter]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+                    displayingBehavior();
                 } else
                 {
                     counter = 4;
-                    mSmiley.setImageResource(arraySmileys[counter]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+                    displayingBehavior();
                 }
-                // Counter saving
-                editor.putInt(PREF_KEY_COUNTER, counter).apply();
-                //END\\ Counter saving
-                mMediaPlayer.start();
-                mMood.setCounter(counter);
-
-                checkDate();
+                swipeBehavior();
             }
 
             public void onSwipeBottom()
             {
-                Date now = new Date();
-                DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-                final String mDate = dateformatter.format(now);
-                
                 if (counter < 4)
                 {
                     counter++;
-                    mSmiley.setImageResource(arraySmileys[counter]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+                    displayingBehavior();
                 } else
                 {
                     counter = 0;
-                    mSmiley.setImageResource(arraySmileys[counter]);
-                    mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+                    displayingBehavior();
                 }
-                //Counter saving
-                editor.putInt(PREF_KEY_COUNTER, counter).apply();
-                //END\\ Counter saving
-                mMood.setCounter(counter);
-                mMediaPlayer.start();
-
-                checkDate();
+                swipeBehavior();
             }
         });
         //END\\ Display Mood and swipe management
@@ -262,7 +155,6 @@ public class MainActivity extends AppCompatActivity
             {
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
-
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("image/*");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_STREAM, Uri.fromFile(cachePath));
@@ -290,7 +182,6 @@ public class MainActivity extends AppCompatActivity
                                 EditText mCommentInput = ((AlertDialog) dialog).findViewById(R.id.comment);
                                 assert mCommentInput != null;
                                 String userComment = mCommentInput.getText().toString();
-
                                 if (userComment.length() != 0)
                                 {
                                     previousUserComment[0] = userComment;
@@ -307,7 +198,6 @@ public class MainActivity extends AppCompatActivity
                         {
                             public void onClick(DialogInterface dialog, int id)
                             {
-                                // User cancelled the dialog : do nothing and quit the dialog
                             }
                         })
                         .show();
@@ -328,4 +218,90 @@ public class MainActivity extends AppCompatActivity
         //END\\ Historic button management
     }
 
+    private void swipeBehavior()
+    {
+        Date now = new Date();
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        final String mDate = dateformatter.format(now);
+        editor.putInt(PREF_KEY_COUNTER, counter).apply();
+        mMood.setCounter(counter);
+        MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
+        mMediaPlayer.start();
+        checkDate();
+    }
+
+    private void checkDate()
+    {
+        if (!mDate.equals(previousDate))
+        {
+            Gson gson1 = new Gson();
+            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+            {
+            }.getType());
+            if (null == fromJsonMoods)
+            {
+                ArrayList<Mood> moods1 = new ArrayList<>();
+                mMood.setDate(mDate);
+                moods1.add(mMood);
+                Gson gson = new Gson();
+                String jsonMoods = gson.toJson(moods1);
+                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+            } else if (moods.size() != 7)
+            {
+                saveMood();
+            } else // moods max size = 7
+            {
+                moods.remove(0);
+                saveMood();
+            }//END\| moods max size = 7
+            counter = 0;
+            editor.putInt(PREF_KEY_COUNTER, counter).apply();
+            previousUserComment[0] = null;
+        } else
+        {
+            Gson gson1 = new Gson();
+            ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+            {
+            }.getType());
+            if (null != fromJsonMoods)
+            {
+                int size = moods.size();
+                moods.remove(size - 1);
+                mMood.setDate(mDate);
+                moods.add(mMood);
+                Gson gson = new Gson();
+                String jsonMoods = gson.toJson(moods);
+                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+            } else
+            {
+                ArrayList<Mood> moods1 = new ArrayList<>();
+                mMood.setDate(mDate);
+                moods1.add(mMood);
+                Gson gson = new Gson();
+                String jsonMoods = gson.toJson(moods1);
+                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+            }
+        }
+        mMood.setDate(mDate);
+        editor.putString(PREF_KEY_DATE, mDate).apply();
+    }
+
+    private void saveMood()
+    {
+        Gson gson1 = new Gson();
+        ArrayList<Mood> moods = gson1.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+        mMood.setDate(mDate);
+        moods.add(mMood);
+        Gson gson = new Gson();
+        String jsonMoods = gson.toJson(moods);
+        editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+    }
+
+    private void displayingBehavior()
+    {
+        mSmiley.setImageResource(arraySmileys[counter]);
+        mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+    }
 }
