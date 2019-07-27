@@ -145,7 +145,7 @@ public class HistoricActivity extends AppCompatActivity
                             @Override
                             public void onClick(final View v)
                             {
-                                Toast.makeText(HistoricActivity.this, moods.get(a).getComment(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(HistoricActivity.this, moods.get(a - 1).getComment(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
