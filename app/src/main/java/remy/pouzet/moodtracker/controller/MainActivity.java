@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity
             } else if (moods.size() != 7)
             {
                 saveMood();
-            } else // moods max size = 7
+            } else if (moods.size() >= 7) // moods max size = 7
             {
                 moods.remove(0);
                 saveMood();
