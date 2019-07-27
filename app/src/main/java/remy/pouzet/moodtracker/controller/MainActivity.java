@@ -63,15 +63,13 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mPreferences;
     private Mood mMood;
 
-    SharedPreferences.Editor editor = mPreferences != null ? mPreferences.edit() : null;
-    String previousDate = mPreferences != null ? mPreferences.getString(PREF_KEY_DATE, null) : null;
-    String[] previousUserComment = {mPreferences != null ? mPreferences.getString(PREF_KEY_COMMENT, null) : null};
-    String fromJsonMoods = mPreferences != null ? mPreferences.getString(PREF_KEY_MOOD, null) : null;
+    SharedPreferences.Editor editor;
+    String previousDate;
+    String previousUserComment;
+    String fromJsonMoods;
 
     Gson gson = new Gson();
-    ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-    {
-    }.getType());
+    ArrayList<Mood> moods;
 
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
@@ -79,6 +77,10 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
 
         //FID
         mContraintLayout = findViewById(R.id.constraintLayout);
@@ -108,8 +110,12 @@ public class MainActivity extends AppCompatActivity
         //mMood Management
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
         counter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-        userComment = previousUserComment[0];
+        userComment = previousUserComment;
         mMood = new Mood(counter, userComment, mDate);
+        editor = mPreferences.edit();
+        previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+        previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
+        fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
         //END\| mMood Management
 
         //Date management : if it's new day, then save previous mood
@@ -189,8 +195,8 @@ public class MainActivity extends AppCompatActivity
                                 String userComment = mCommentInput.getText().toString();
                                 if (userComment.length() != 0)
                                 {
-                                    previousUserComment[0] = userComment;
-                                    editor.putString(PREF_KEY_COMMENT, previousUserComment[0]).apply();
+                                    previousUserComment = userComment;
+                                    editor.putString(PREF_KEY_COMMENT, previousUserComment).apply();
                                     mMood.setComment(userComment);
                                 } else
                                 {
@@ -256,7 +262,7 @@ public class MainActivity extends AppCompatActivity
             }//END\| moods max size = 7
             counter = 0;
             editor.putInt(PREF_KEY_COUNTER, counter).apply();
-            previousUserComment[0] = null;
+            previousUserComment = null;
         } else
         {
             if (null != fromJsonMoods)
