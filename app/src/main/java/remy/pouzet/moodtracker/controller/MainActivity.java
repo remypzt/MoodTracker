@@ -70,14 +70,15 @@ public class MainActivity extends AppCompatActivity
     Gson gson = new Gson();
     ArrayList<Mood> moods;
 
-    Date now = new Date();
-    DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-    String mDate = dateformatter.format(now);
 
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Date now = new Date();
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        String mDate = dateformatter.format(now);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -112,12 +113,8 @@ public class MainActivity extends AppCompatActivity
         userComment = previousUserComment;
         mMood = new Mood(counter, userComment, mDate);
         editor = mPreferences.edit();
-        previousDate = mPreferences.getString(PREF_KEY_DATE, null);
         previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
-        fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
+
         //END\| mMood Management
 
         // Display Mood and swipe management
@@ -236,24 +233,21 @@ public class MainActivity extends AppCompatActivity
 
     private void checkDate()
     {
+        Date now = new Date();
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        String mDate = dateformatter.format(now);
+
+        fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+
         if (previousDate == null)
         {
             previousDate = mDate;
         }
-        if (!previousDate.equals(mDate))
-        {
-            if (moods.size() != 7)
-            {
-                saveMood();
-            } else if (moods.size() >= 7) // moods max size = 7
-            {
-                moods.remove(0);
-                saveMood();
-            }//END\| moods max size = 7
-            counter = 0;
-            editor.putInt(PREF_KEY_COUNTER, counter).apply();
-            previousUserComment = null;
-        } else if (mDate.equals(previousDate))
+        if (previousDate.equals(mDate))
         {
             if (null != fromJsonMoods)
             {
@@ -271,6 +265,19 @@ public class MainActivity extends AppCompatActivity
                 String jsonMoods = gson.toJson(moods1);
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             }
+        } else
+        {
+            if (moods.size() != 7)
+            {
+                saveMood();
+            } else if (moods.size() >= 7) // moods max size = 7
+            {
+                moods.remove(0);
+                saveMood();
+            }//END\| moods max size = 7
+            counter = 0;
+            editor.putInt(PREF_KEY_COUNTER, counter).apply();
+            previousUserComment = null;
         }
         mMood.setDate(mDate);
         editor.putString(PREF_KEY_DATE, mDate).apply();
@@ -278,6 +285,13 @@ public class MainActivity extends AppCompatActivity
 
     private void saveMood()
     {
+        Date now = new Date();
+        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        String mDate = dateformatter.format(now);
+        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+
         mMood.setDate(mDate);
         moods.add(mMood);
         String jsonMoods = gson.toJson(moods);
