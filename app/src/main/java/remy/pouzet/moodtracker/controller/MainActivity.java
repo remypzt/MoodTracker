@@ -65,13 +65,10 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences.Editor editor;
     String previousDate;
     String previousUserComment;
-    String fromJsonMoods = mPreferences != null ? mPreferences.getString(PREF_KEY_MOOD, null) : null;
+    String fromJsonMoods;
 
     Gson gson = new Gson();
-    ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-    {
-    }.getType());
-
+    ArrayList<Mood> moods;
 
     Date now = new Date();
     DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
@@ -83,7 +80,6 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         //FID
@@ -119,6 +115,11 @@ public class MainActivity extends AppCompatActivity
         editor = mPreferences.edit();
         previousDate = mPreferences.getString(PREF_KEY_DATE, null);
         previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
+        fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+
         //END\| mMood Management
 
 
@@ -265,8 +266,8 @@ public class MainActivity extends AppCompatActivity
         {
             if (null != fromJsonMoods)
             {
-                int size = moods.size();
-                moods.remove(size - 1);
+                int index = moods.size() - 1;
+                moods.remove(index);
                 mMood.setDate(mDate);
                 moods.add(mMood);
                 String jsonMoods = gson.toJson(moods);
