@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //FID
         mContraintLayout = findViewById(R.id.constraintLayout);
         ImageView comment = findViewById(R.id.commentLogoView);
@@ -119,9 +118,7 @@ public class MainActivity extends AppCompatActivity
         moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {
         }.getType());
-
         //END\| mMood Management
-
 
         // Display Mood and swipe management
         displayingBehavior();
@@ -230,9 +227,6 @@ public class MainActivity extends AppCompatActivity
 
     private void swipeBehavior()
     {
-        Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        final String mDate = dateformatter.format(now);
         editor.putInt(PREF_KEY_COUNTER, counter).apply();
         mMood.setCounter(counter);
         MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
@@ -242,7 +236,11 @@ public class MainActivity extends AppCompatActivity
 
     private void checkDate()
     {
-        if (!mDate.equals(previousDate))
+        if (previousDate == null)
+        {
+            previousDate = mDate;
+        }
+        if (!previousDate.equals(mDate))
         {
             if (null == fromJsonMoods)
             {
