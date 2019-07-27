@@ -242,14 +242,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (!previousDate.equals(mDate))
         {
-            if (null == fromJsonMoods)
-            {
-                ArrayList<Mood> moods1 = new ArrayList<>();
-                mMood.setDate(mDate);
-                moods1.add(mMood);
-                String jsonMoods = gson.toJson(moods1);
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
-            } else if (moods.size() != 7)
+            if (moods.size() != 7)
             {
                 saveMood();
             } else if (moods.size() >= 7) // moods max size = 7
