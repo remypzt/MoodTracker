@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private String userComment;
-    private String mDate;
     private SharedPreferences mPreferences;
     private Mood mMood;
 
@@ -70,6 +69,10 @@ public class MainActivity extends AppCompatActivity
 
     Gson gson = new Gson();
     ArrayList<Mood> moods;
+
+    Date now = new Date();
+    DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
+    String mDate = dateformatter.format(now);
 
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
@@ -118,11 +121,6 @@ public class MainActivity extends AppCompatActivity
         fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
         //END\| mMood Management
 
-        //Date management : if it's new day, then save previous mood
-        Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        final String mDate = dateformatter.format(now);
-        //END\\ Date management : if it's new day, then save previous mood
 
         // Display Mood and swipe management
         displayingBehavior();
