@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity
         mMood = new Mood(counter, userComment, mDate);
         editor = mPreferences.edit();
         previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
-
         //END\| mMood Management
 
         // Display Mood and swipe management
@@ -187,8 +186,10 @@ public class MainActivity extends AppCompatActivity
                                 if (userComment.length() != 0)
                                 {
                                     previousUserComment = userComment;
-                                    editor.putString(PREF_KEY_COMMENT, previousUserComment).apply();
                                     mMood.setComment(userComment);
+                                    editor.putString(PREF_KEY_COMMENT, previousUserComment).apply();
+                                    String jsonMoods = gson.toJson(moods);
+                                    editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
                                 } else
                                 {
                                     Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_LONG).show();
