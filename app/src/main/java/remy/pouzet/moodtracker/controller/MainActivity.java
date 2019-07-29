@@ -108,10 +108,10 @@ public class MainActivity extends AppCompatActivity
         //mMood Management
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
         counter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
-        userComment = previousUserComment;
         mMood = new Mood(counter, userComment, mDate);
         editor = mPreferences.edit();
         previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
+        userComment = previousUserComment;
         //END\| mMood Management
 
         // Display Mood and swipe management
@@ -214,9 +214,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent HistoricActivity = new Intent(MainActivity.this, HistoricActivity.class);
-                startActivity(HistoricActivity);
+                if (null == fromJsonMoods)
+                {
+                    Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_LONG).show();
+                } else
+                {
+                    Intent HistoricActivity = new Intent(MainActivity.this, HistoricActivity.class);
+                    startActivity(HistoricActivity);
+                }
             }
+
         });
         //END\\ Historic button management
     }
@@ -249,8 +256,7 @@ public class MainActivity extends AppCompatActivity
         {
             if (null != fromJsonMoods)
             {
-                int index = moods.size() - 1;
-                moods.remove(index);
+                moods.remove(moods.size() - 1);
                 mMood.setDate(mDate);
                 moods.add(mMood);
                 String jsonMoods = gson.toJson(moods);
@@ -262,6 +268,10 @@ public class MainActivity extends AppCompatActivity
                 moods1.add(mMood);
                 String jsonMoods = gson.toJson(moods1);
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+            }
+            if (previousUserComment != null)
+            {
+                Toast.makeText(MainActivity.this, "Votre  précédent commentaire a été effacé", Toast.LENGTH_LONG).show();
             }
         } else
         {
@@ -275,20 +285,17 @@ public class MainActivity extends AppCompatActivity
             }//END\| moods max size = 7
             counter = 0;
             editor.putInt(PREF_KEY_COUNTER, counter).apply();
-            previousUserComment = null;
         }
         mMood.setDate(mDate);
         editor.putLong(PREF_KEY_DATE, mDate).apply();
+        userComment = null;
+        editor.putString(PREF_KEY_COMMENT, userComment).apply();
     }
 
     private void saveMood()
     {
         Date now = new Date();
         long mDate = now.getTime() / 86400000;
-
-        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
 
         mMood.setDate(mDate);
         moods.add(mMood);

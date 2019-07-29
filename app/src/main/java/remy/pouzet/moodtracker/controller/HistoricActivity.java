@@ -77,9 +77,8 @@ public class HistoricActivity extends AppCompatActivity
         Date now = new Date();
         long mDate = now.getTime() / 86400000;
 
-        if (null != fromJsonMoods)
-        {
-            while (a + 1 <= moods.size() || moods.size() > 8)
+        assert moods != null;
+        while (a + 1 <= moods.size() || moods.size() > 8)
             {
                 if (moods.get(a) != null)
                 {
@@ -152,4 +151,3 @@ public class HistoricActivity extends AppCompatActivity
             }
         }
     }
-}
