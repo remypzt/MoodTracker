@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         Date now = new Date();
-        long mDate = now.getTime();
+        long mDate = now.getTime() / 86400000;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity
     private void checkDate()
     {
         Date now = new Date();
-        long mDate = now.getTime();
+        long mDate = now.getTime() / 86400000;
 
         fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
         previousDate = mPreferences.getLong(PREF_KEY_DATE, 0);
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity
     private void saveMood()
     {
         Date now = new Date();
-        long mDate = now.getTime();
+        long mDate = now.getTime() / 86400000;
 
         moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {

@@ -75,7 +75,7 @@ public class HistoricActivity extends AppCompatActivity
         int twoWidth = fifthWidth * 2;
 
         Date now = new Date();
-        long mDate = now.getTime();
+        long mDate = now.getTime() / 86400000;
 
         if (null != fromJsonMoods)
         {
@@ -83,7 +83,7 @@ public class HistoricActivity extends AppCompatActivity
             {
                 if (moods.get(a) != null)
                 {
-                    long compare = (moods.get(a).getDate() - mDate) / 86400000;
+                    long compare = (moods.get(a).getDate() - mDate);
                     String resultCompare;
 
                     if (compare == 0)
