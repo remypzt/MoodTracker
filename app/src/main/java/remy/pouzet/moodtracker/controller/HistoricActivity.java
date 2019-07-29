@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -76,8 +75,7 @@ public class HistoricActivity extends AppCompatActivity
         int twoWidth = fifthWidth * 2;
 
         Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        final String mDate = dateformatter.format(now);
+        long mDate = now.getTime();
 
         if (null != fromJsonMoods)
         {
@@ -85,7 +83,7 @@ public class HistoricActivity extends AppCompatActivity
             {
                 if (moods.get(a) != null)
                 {
-                    int compare = moods.get(a).getDate().compareTo(mDate);
+                    long compare = (moods.get(a).getDate() - mDate) / 86400000;
                     String resultCompare;
 
                     if (compare == 0)

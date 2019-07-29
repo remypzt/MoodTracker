@@ -24,7 +24,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     private Mood mMood;
 
     SharedPreferences.Editor editor;
-    String previousDate;
+    long previousDate;
     String previousUserComment;
     String fromJsonMoods;
 
@@ -76,8 +75,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        String mDate = dateformatter.format(now);
+        long mDate = now.getTime();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -234,20 +232,19 @@ public class MainActivity extends AppCompatActivity
     private void checkDate()
     {
         Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        String mDate = dateformatter.format(now);
+        long mDate = now.getTime();
 
         fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        previousDate = mPreferences.getString(PREF_KEY_DATE, null);
+        previousDate = mPreferences.getLong(PREF_KEY_DATE, 0);
         moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {
         }.getType());
 
-        if (previousDate == null)
+        if (previousDate == 0)
         {
             previousDate = mDate;
         }
-        if (previousDate.equals(mDate))
+        if (previousDate == mDate)
         {
             if (null != fromJsonMoods)
             {
@@ -280,14 +277,14 @@ public class MainActivity extends AppCompatActivity
             previousUserComment = null;
         }
         mMood.setDate(mDate);
-        editor.putString(PREF_KEY_DATE, mDate).apply();
+        editor.putLong(PREF_KEY_DATE, mDate).apply();
     }
 
     private void saveMood()
     {
         Date now = new Date();
-        DateFormat dateformatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        String mDate = dateformatter.format(now);
+        long mDate = now.getTime();
+
         moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {
         }.getType());

@@ -9,10 +9,10 @@ public class Mood
 {
     private int mCounter;
     private String mComment;
-    private String mDate;
+    private long mDate;
 
 
-    public Mood(int counter, String comment, String date)
+    public Mood(int counter, String comment, long date)
     {
         mCounter = counter;
         mComment = comment;
@@ -41,14 +41,13 @@ public class Mood
         mComment = comment;
     }
 
-    public String getDate()
+    public long getDate()
     {
         return mDate;
     }
 
-    public void setDate(String date)
+    public void setDate(long date)
     {
         mDate = date;
     }
-
 }
