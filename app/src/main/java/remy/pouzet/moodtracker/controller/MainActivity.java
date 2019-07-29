@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity
 
     SharedPreferences.Editor editor;
     long previousDate;
-    String previousUserComment;
     String fromJsonMoods;
 
     Gson gson = new Gson();
@@ -110,8 +109,6 @@ public class MainActivity extends AppCompatActivity
         counter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
         mMood = new Mood(counter, userComment, mDate);
         editor = mPreferences.edit();
-        previousUserComment = mPreferences.getString(PREF_KEY_COMMENT, null);
-        userComment = previousUserComment;
         //END\| mMood Management
 
         // Display Mood and swipe management
@@ -182,12 +179,12 @@ public class MainActivity extends AppCompatActivity
                             {
                                 EditText mCommentInput = ((AlertDialog) dialog).findViewById(R.id.comment);
                                 assert mCommentInput != null;
-                                String userComment = mCommentInput.getText().toString();
-                                if (userComment.length() != 0)
+                                String userCommentInput = mCommentInput.getText().toString();
+                                if (userCommentInput.length() != 0)
                                 {
-                                    previousUserComment = userComment;
+                                    userComment = userCommentInput;
                                     mMood.setComment(userComment);
-                                    editor.putString(PREF_KEY_COMMENT, previousUserComment).apply();
+                                    editor.putString(PREF_KEY_COMMENT, userComment).apply();
                                     String jsonMoods = gson.toJson(moods);
                                     editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
                                 } else
@@ -269,7 +266,7 @@ public class MainActivity extends AppCompatActivity
                 String jsonMoods = gson.toJson(moods1);
                 editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
             }
-            if (previousUserComment != null)
+            if (userComment != null)
             {
                 Toast.makeText(MainActivity.this, "Votre  précédent commentaire a été effacé", Toast.LENGTH_LONG).show();
             }
