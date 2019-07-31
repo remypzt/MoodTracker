@@ -135,7 +135,7 @@ public class HistoricActivity extends AppCompatActivity
             }
 
         }
-        if (moods.size() > 1)
+        if (moods.size() >= 1)
         {
             if (moods.get(0).getComment() != null)
             {
@@ -151,7 +151,7 @@ public class HistoricActivity extends AppCompatActivity
                     }
                 });
             }
-            if (moods.size() > 2)
+            if (moods.size() >= 2)
             {
                 if (moods.get(1).getComment() != null)
                 {
@@ -167,7 +167,7 @@ public class HistoricActivity extends AppCompatActivity
                         }
                     });
                 }
-                if (moods.size() > 2)
+                if (moods.size() >= 3)
                 {
                     if (moods.get(2).getComment() != null)
                     {
@@ -183,7 +183,7 @@ public class HistoricActivity extends AppCompatActivity
                             }
                         });
                     }
-                    if (moods.size() > 3)
+                    if (moods.size() >= 4)
                     {
                         if (moods.get(3).getComment() != null)
                         {
@@ -199,7 +199,7 @@ public class HistoricActivity extends AppCompatActivity
                                 }
                             });
                         }
-                        if (moods.size() > 4)
+                        if (moods.size() >= 5)
                         {
                             if (moods.get(4).getComment() != null)
                             {
@@ -215,7 +215,7 @@ public class HistoricActivity extends AppCompatActivity
                                     }
                                 });
                             }
-                            if (moods.size() > 5)
+                            if (moods.size() >= 6)
                             {
                                 if (moods.get(5).getComment() != null)
                                 {
@@ -231,7 +231,7 @@ public class HistoricActivity extends AppCompatActivity
                                         }
                                     });
                                 }
-                                if (moods.size() > 6)
+                                if (moods.size() >= 7)
                                 {
                                     if (moods.get(6).getComment() != null)
                                     {
@@ -246,22 +246,6 @@ public class HistoricActivity extends AppCompatActivity
                                                 Toast.makeText(HistoricActivity.this, moods.get(6).getComment(), Toast.LENGTH_LONG).show();
                                             }
                                         });
-                                    }
-                                    if (moods.size() > 7)
-                                    {
-                                        if (moods.get(7).getComment() != null)
-                                        {
-                                            baners.get(7).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                            baners.get(7).setForegroundGravity(21);
-
-                                            baners.get(7).setOnClickListener(new View.OnClickListener()
-                                            {
-                                                @Override
-                                                public void onClick(final View v)
-                                                {
-                                                    Toast.makeText(HistoricActivity.this, moods.get(7).getComment(), Toast.LENGTH_LONG).show();
-                                                }
-                                            });
                                         }
                                     }
                                 }
@@ -272,6 +256,6 @@ public class HistoricActivity extends AppCompatActivity
             }
         }
     }
-}
+
 
 
