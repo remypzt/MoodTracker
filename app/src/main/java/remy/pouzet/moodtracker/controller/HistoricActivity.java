@@ -79,75 +79,199 @@ public class HistoricActivity extends AppCompatActivity
 
         assert moods != null;
         while (a + 1 <= moods.size() || moods.size() > 8)
+        {
+            if (moods.get(a) != null)
             {
-                if (moods.get(a) != null)
+                long compare = (moods.get(a).getDate() - mDate);
+                String resultCompare;
+
+                if (compare == 0)
                 {
-                    long compare = (moods.get(a).getDate() - mDate);
-                    String resultCompare;
+                    resultCompare = "Aujourd'hui";
+                } else if (compare == -1)
+                {
+                    resultCompare = "Hier";
+                } else if (compare == -2)
+                {
+                    resultCompare = "Avant-hier";
+                } else if (compare < -2 && compare > -7)
+                {
+                    resultCompare = "Il y a " + (compare - compare * 2) + " jours";
+                } else if (compare == -7)
+                {
+                    resultCompare = "Il y a une semaine";
+                } else if (compare < -7 && compare > -32)
+                {
+                    resultCompare = "Il y a plus de 1 semaine";
+                } else
+                {
+                    resultCompare = "Il y a plus de 1 mois";
+                }
+                baners.get(a).setText(resultCompare);
 
-                    if (compare == 0)
+                switch (moods.get(a).getCounter())
+                {
+                    case 0:
+                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.light_sage));
+                        baners.get(a).getLayoutParams().width = fourWidth;
+                        break;
+                    case 1:
+                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.cornflower_blue_65));
+                        baners.get(a).getLayoutParams().width = threeWidth;
+                        break;
+                    case 2:
+                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.warm_grey));
+                        baners.get(a).getLayoutParams().width = twoWidth;
+                        break;
+                    case 3:
+                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.faded_red));
+                        baners.get(a).getLayoutParams().width = fifthWidth;
+                        break;
+                    default:
+                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.banana_yellow));
+                        baners.get(a).getLayoutParams().width = width;
+                }
+                a++;
+            }
+
+        }
+        if (moods.size() > 1)
+        {
+            if (moods.get(0).getComment() != null)
+            {
+                baners.get(0).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                baners.get(0).setForegroundGravity(21);
+
+                baners.get(0).setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(final View v)
                     {
-                        resultCompare = "Aujourd'hui";
-                    } else if (compare == -1)
-                    {
-                        resultCompare = "Hier";
-                    } else if (compare == -2)
-                    {
-                        resultCompare = "Avant-hier";
-                    } else if (compare < -2 && compare > -7)
-                    {
-                        resultCompare = "Il y a " + (compare - compare * 2) + " jours";
-                    } else if (compare == -7)
-                    {
-                        resultCompare = "Il y a une semaine";
-                    } else if (compare < -7 && compare > -32)
-                    {
-                        resultCompare = "Il y a plus de 1 semaine";
-                    } else
-                    {
-                        resultCompare = "Il y a plus de 1 mois";
+                        Toast.makeText(HistoricActivity.this, moods.get(0).getComment(), Toast.LENGTH_LONG).show();
                     }
-                    baners.get(a).setText(resultCompare);
+                });
+            }
+            if (moods.size() > 2)
+            {
+                if (moods.get(1).getComment() != null)
+                {
+                    baners.get(1).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                    baners.get(1).setForegroundGravity(21);
 
-                    switch (moods.get(a).getCounter())
+                    baners.get(1).setOnClickListener(new View.OnClickListener()
                     {
-                        case 0:
-                            baners.get(a).setBackgroundColor(getResources().getColor(R.color.light_sage));
-                            baners.get(a).getLayoutParams().width = fourWidth;
-                            break;
-                        case 1:
-                            baners.get(a).setBackgroundColor(getResources().getColor(R.color.cornflower_blue_65));
-                            baners.get(a).getLayoutParams().width = threeWidth;
-                            break;
-                        case 2:
-                            baners.get(a).setBackgroundColor(getResources().getColor(R.color.warm_grey));
-                            baners.get(a).getLayoutParams().width = twoWidth;
-                            break;
-                        case 3:
-                            baners.get(a).setBackgroundColor(getResources().getColor(R.color.faded_red));
-                            baners.get(a).getLayoutParams().width = fifthWidth;
-                            break;
-                        default:
-                            baners.get(a).setBackgroundColor(getResources().getColor(R.color.banana_yellow));
-                            baners.get(a).getLayoutParams().width = width;
-                    }
-
-                    if (moods.get(a).getComment() != null)
+                        @Override
+                        public void onClick(final View v)
+                        {
+                            Toast.makeText(HistoricActivity.this, moods.get(1).getComment(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                if (moods.size() > 2)
+                {
+                    if (moods.get(2).getComment() != null)
                     {
-                        baners.get(a).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                        baners.get(a).setForegroundGravity(21);
+                        baners.get(2).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                        baners.get(2).setForegroundGravity(21);
 
-                        baners.get(a).setOnClickListener(new View.OnClickListener()
+                        baners.get(2).setOnClickListener(new View.OnClickListener()
                         {
                             @Override
                             public void onClick(final View v)
                             {
-                                Toast.makeText(HistoricActivity.this, moods.get(a - 1).getComment(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(HistoricActivity.this, moods.get(2).getComment(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
-                    a++;
+                    if (moods.size() > 3)
+                    {
+                        if (moods.get(3).getComment() != null)
+                        {
+                            baners.get(3).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                            baners.get(3).setForegroundGravity(21);
+
+                            baners.get(3).setOnClickListener(new View.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(final View v)
+                                {
+                                    Toast.makeText(HistoricActivity.this, moods.get(3).getComment(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                        if (moods.size() > 4)
+                        {
+                            if (moods.get(4).getComment() != null)
+                            {
+                                baners.get(4).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                                baners.get(4).setForegroundGravity(21);
+
+                                baners.get(4).setOnClickListener(new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(final View v)
+                                    {
+                                        Toast.makeText(HistoricActivity.this, moods.get(4).getComment(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                            if (moods.size() > 5)
+                            {
+                                if (moods.get(5).getComment() != null)
+                                {
+                                    baners.get(5).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                                    baners.get(5).setForegroundGravity(21);
+
+                                    baners.get(5).setOnClickListener(new View.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(final View v)
+                                        {
+                                            Toast.makeText(HistoricActivity.this, moods.get(5).getComment(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                                if (moods.size() > 6)
+                                {
+                                    if (moods.get(6).getComment() != null)
+                                    {
+                                        baners.get(6).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                                        baners.get(6).setForegroundGravity(21);
+
+                                        baners.get(6).setOnClickListener(new View.OnClickListener()
+                                        {
+                                            @Override
+                                            public void onClick(final View v)
+                                            {
+                                                Toast.makeText(HistoricActivity.this, moods.get(6).getComment(), Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                    if (moods.size() > 7)
+                                    {
+                                        if (moods.get(7).getComment() != null)
+                                        {
+                                            baners.get(7).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+                                            baners.get(7).setForegroundGravity(21);
+
+                                            baners.get(7).setOnClickListener(new View.OnClickListener()
+                                            {
+                                                @Override
+                                                public void onClick(final View v)
+                                                {
+                                                    Toast.makeText(HistoricActivity.this, moods.get(7).getComment(), Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+

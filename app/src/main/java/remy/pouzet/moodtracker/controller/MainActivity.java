@@ -33,7 +33,6 @@ import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 
 public class MainActivity extends AppCompatActivity
 {
-    public static final String PREF_KEY_COMMENT = "PREF_KEY_COMMENT";
     public static final String PREF_KEY_COUNTER = "PREF_KEY_COUNTER2";
     public static final String PREF_KEY_DATE = "PREF_KEY_DATE";
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
@@ -60,8 +59,6 @@ public class MainActivity extends AppCompatActivity
     private String userComment;
     private SharedPreferences mPreferences;
     private Mood mMood;
-
-    SharedPreferences.Editor editor;
     long previousDate;
     String fromJsonMoods;
 
@@ -108,7 +105,10 @@ public class MainActivity extends AppCompatActivity
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
         counter = mPreferences.getInt(PREF_KEY_COUNTER, 0);
         mMood = new Mood(counter, userComment, mDate);
-        editor = mPreferences.edit();
+        fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
         //END\| mMood Management
 
         // Display Mood and swipe management
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity
                     displayingBehavior();
                 }
                 swipeBehavior();
+                mMood.setComment(null);
             }
 
             public void onSwipeBottom()
@@ -141,6 +142,8 @@ public class MainActivity extends AppCompatActivity
                     displayingBehavior();
                 }
                 swipeBehavior();
+                mMood.setComment(null);
+
             }
         });
         //END\\ Display Mood and swipe management
@@ -184,9 +187,9 @@ public class MainActivity extends AppCompatActivity
                                 {
                                     userComment = userCommentInput;
                                     mMood.setComment(userComment);
-                                    editor.putString(PREF_KEY_COMMENT, userComment).apply();
-                                    String jsonMoods = gson.toJson(moods);
-                                    editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                                    checkDate();
+                                    Toast.makeText(MainActivity.this, "Votre commentaire a été enregistré", Toast.LENGTH_LONG).show();
+
                                 } else
                                 {
                                     Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_LONG).show();
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+
                 if (null == fromJsonMoods)
                 {
                     Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_LONG).show();
@@ -227,7 +231,7 @@ public class MainActivity extends AppCompatActivity
 
     private void swipeBehavior()
     {
-        editor.putInt(PREF_KEY_COUNTER, counter).apply();
+        mPreferences.edit().putInt(PREF_KEY_COUNTER, counter).apply();
         mMood.setCounter(counter);
         MediaPlayer mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.clak);
         mMediaPlayer.start();
@@ -257,14 +261,14 @@ public class MainActivity extends AppCompatActivity
                 mMood.setDate(mDate);
                 moods.add(mMood);
                 String jsonMoods = gson.toJson(moods);
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                mPreferences.edit().putString(PREF_KEY_MOOD, jsonMoods).apply();
             } else
             {
                 ArrayList<Mood> moods1 = new ArrayList<>();
                 mMood.setDate(mDate);
                 moods1.add(mMood);
                 String jsonMoods = gson.toJson(moods1);
-                editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+                mPreferences.edit().putString(PREF_KEY_MOOD, jsonMoods).apply();
             }
             if (userComment != null)
             {
@@ -272,32 +276,29 @@ public class MainActivity extends AppCompatActivity
             }
         } else
         {
-            if (moods.size() != 7)
+            if (moods.size() < 7)
             {
                 saveMood();
-            } else if (moods.size() >= 7) // moods max size = 7
+            } else  // moods max size = 7
             {
                 moods.remove(0);
                 saveMood();
             }//END\| moods max size = 7
             counter = 0;
-            editor.putInt(PREF_KEY_COUNTER, counter).apply();
+            mPreferences.edit().putInt(PREF_KEY_COUNTER, counter).apply();
         }
         mMood.setDate(mDate);
-        editor.putLong(PREF_KEY_DATE, mDate).apply();
-        userComment = null;
-        editor.putString(PREF_KEY_COMMENT, userComment).apply();
+        mPreferences.edit().putLong(PREF_KEY_DATE, mDate).apply();
     }
 
     private void saveMood()
     {
         Date now = new Date();
         long mDate = now.getTime() / 86400000;
-
         mMood.setDate(mDate);
         moods.add(mMood);
         String jsonMoods = gson.toJson(moods);
-        editor.putString(PREF_KEY_MOOD, jsonMoods).apply();
+        mPreferences.edit().putString(PREF_KEY_MOOD, jsonMoods).apply();
     }
 
     private void displayingBehavior()
