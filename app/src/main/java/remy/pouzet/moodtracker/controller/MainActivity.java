@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
                 if (null == fromJsonMoods)
                 {
                     Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_SHORT).show();
