@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity
                     counter = 4;
                     displayingBehavior();
                 }
-                swipeBehavior();
                 mMood.setComment(null);
+                swipeBehavior();
             }
 
             public void onSwipeBottom()
@@ -141,9 +141,8 @@ public class MainActivity extends AppCompatActivity
                     counter = 0;
                     displayingBehavior();
                 }
-                swipeBehavior();
                 mMood.setComment(null);
-
+                swipeBehavior();
             }
         });
         //END\\ Display Mood and swipe management
@@ -188,11 +187,10 @@ public class MainActivity extends AppCompatActivity
                                     userComment = userCommentInput;
                                     mMood.setComment(userComment);
                                     checkDate();
-                                    Toast.makeText(MainActivity.this, "Votre commentaire a été enregistré", Toast.LENGTH_LONG).show();
-
+                                    Toast.makeText(MainActivity.this, "Votre commentaire a été enregistré", Toast.LENGTH_SHORT).show();
                                 } else
                                 {
-                                    Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Votre commentaire ne doit pas être vide", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         })
@@ -217,7 +215,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (null == fromJsonMoods)
                 {
-                    Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_SHORT).show();
                 } else
                 {
                     Intent HistoricActivity = new Intent(MainActivity.this, HistoricActivity.class);
@@ -272,7 +270,7 @@ public class MainActivity extends AppCompatActivity
             }
             if (userComment != null)
             {
-                Toast.makeText(MainActivity.this, "Votre  précédent commentaire a été effacé", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Votre  précédent commentaire a été effacé", Toast.LENGTH_SHORT).show();
             }
         } else
         {
