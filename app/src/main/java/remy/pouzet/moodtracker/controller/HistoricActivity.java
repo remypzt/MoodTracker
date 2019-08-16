@@ -28,12 +28,8 @@ import remy.pouzet.moodtracker.model.Mood;
 public class HistoricActivity extends AppCompatActivity
 {
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
-    final int today = 0;
     private SharedPreferences mPreferences;
-    final int yesterday = -1;
-    final int beforeYesterday = -2;
-    final int aWeekAgo = -7;
-    final int aMonthAgo = -32;
+
     Gson gson = new Gson();
     String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
     final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
@@ -44,6 +40,11 @@ public class HistoricActivity extends AppCompatActivity
     int centerRight = 21;
     Date now = new Date();
     long mDate = now.getTime() / 86400000;
+    final int today = 0;
+    final int yesterday = -1;
+    final int beforeYesterday = -2;
+    final int aWeekAgo = -7;
+    final int aMonthAgo = -32;
     //END Util
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -102,27 +103,23 @@ public class HistoricActivity extends AppCompatActivity
                 case beforeYesterday:
                     comparaisonResultatBetweenCurrentDateToMoodDate = "Avant-hier";
                     break;
-                case ( < beforeYesterday:
-                    comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a " + (compareCurrentDateToMoodDate - compareCurrentDateToMoodDate * 2) + " jours";
-                    break;
-
                 case aWeekAgo:
                     comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a une semaine";
                     break;
                 default:
-                    comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 mois";
-
-
-            } else
-            if (compareCurrentDateToMoodDate < beforeYesterday && compareCurrentDateToMoodDate > aWeekAgo)
-            {
-                comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a " + (compareCurrentDateToMoodDate - compareCurrentDateToMoodDate * 2) + " jours";
-
-            } else if (compareCurrentDateToMoodDate < aWeekAgo && compareCurrentDateToMoodDate > aMonthAgo)
-            {
-                comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 semaine";
+                    if (compareCurrentDateToMoodDate < beforeYesterday && compareCurrentDateToMoodDate > aWeekAgo)
+                    {
+                        comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a " + (compareCurrentDateToMoodDate - compareCurrentDateToMoodDate * 2) + " jours";
+                    } else if (compareCurrentDateToMoodDate < aWeekAgo && compareCurrentDateToMoodDate > aMonthAgo)
+                    {
+                        comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 semaine";
+                    } else
+                    {
+                        comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 mois";
+                    }
 
             }
+
             baners.get(a).setText(comparaisonResultatBetweenCurrentDateToMoodDate);
         }
     }
