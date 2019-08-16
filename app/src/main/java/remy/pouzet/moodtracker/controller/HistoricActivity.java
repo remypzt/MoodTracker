@@ -28,9 +28,23 @@ import remy.pouzet.moodtracker.model.Mood;
 public class HistoricActivity extends AppCompatActivity
 {
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
+    final int today = 0;
     private SharedPreferences mPreferences;
-
+    final int yesterday = -1;
+    final int beforeYesterday = -2;
+    final int aWeekAgo = -7;
+    final int aMonthAgo = -32;
+    Gson gson = new Gson();
+    String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+    final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+    {
+    }.getType());
+    //Util
     int a = 0;
+    int centerRight = 21;
+    Date now = new Date();
+    long mDate = now.getTime() / 86400000;
+    //END Util
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -40,12 +54,6 @@ public class HistoricActivity extends AppCompatActivity
         setContentView(R.layout.historic_activity);
 
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-
-        Gson gson = new Gson();
-        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
 
         TextView baner = findViewById(R.id.imageView);
         TextView baner2 = findViewById(R.id.imageView2);
@@ -64,83 +72,105 @@ public class HistoricActivity extends AppCompatActivity
         baners.add(baner6);
         baners.add(baner7);
 
+        assert moods != null;
+        while (a + 1 <= moods.size() || moods.size() > 8)
+        {
+            dispayingDateManagement();
+            bannersBackgroundColorDisplayingManagement();
+        }
+        commentUserDisplayingManagement();
+    }
+
+    private void dispayingDateManagement()
+    {
+
+        if (moods.get(a) != null)
+        {
+            long longCompareCurrentDateToMoodDate = (moods.get(a).getDate() - mDate);
+            int compareCurrentDateToMoodDate = (int) longCompareCurrentDateToMoodDate;
+
+            String comparaisonResultatBetweenCurrentDateToMoodDate;
+
+            switch (compareCurrentDateToMoodDate)
+            {
+                case today:
+                    comparaisonResultatBetweenCurrentDateToMoodDate = "Aujourd'hui";
+                    break;
+                case yesterday:
+                    comparaisonResultatBetweenCurrentDateToMoodDate = "Hier";
+                    break;
+                case beforeYesterday:
+                    comparaisonResultatBetweenCurrentDateToMoodDate = "Avant-hier";
+                    break;
+                case ( < beforeYesterday:
+                    comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a " + (compareCurrentDateToMoodDate - compareCurrentDateToMoodDate * 2) + " jours";
+                    break;
+
+                case aWeekAgo:
+                    comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a une semaine";
+                    break;
+                default:
+                    comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 mois";
+
+
+            } else
+            if (compareCurrentDateToMoodDate < beforeYesterday && compareCurrentDateToMoodDate > aWeekAgo)
+            {
+                comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a " + (compareCurrentDateToMoodDate - compareCurrentDateToMoodDate * 2) + " jours";
+
+            } else if (compareCurrentDateToMoodDate < aWeekAgo && compareCurrentDateToMoodDate > aMonthAgo)
+            {
+                comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 semaine";
+
+            }
+            baners.get(a).setText(comparaisonResultatBetweenCurrentDateToMoodDate);
+        }
+    }
+
+    private void bannersBackgroundColorDisplayingManagement()
+    {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        int height = size.y;
         int fifthWidth = width / 5;
         int fourWidth = fifthWidth * 4;
         int threeWidth = fifthWidth * 3;
         int twoWidth = fifthWidth * 2;
 
-        Date now = new Date();
-        long mDate = now.getTime() / 86400000;
-
-        assert moods != null;
-        while (a + 1 <= moods.size() || moods.size() > 8)
+        switch (moods.get(a).getCounter())
         {
-            if (moods.get(a) != null)
-            {
-                long compare = (moods.get(a).getDate() - mDate);
-                String resultCompare;
-
-                if (compare == 0)
-                {
-                    resultCompare = "Aujourd'hui";
-                } else if (compare == -1)
-                {
-                    resultCompare = "Hier";
-                } else if (compare == -2)
-                {
-                    resultCompare = "Avant-hier";
-                } else if (compare < -2 && compare > -7)
-                {
-                    resultCompare = "Il y a " + (compare - compare * 2) + " jours";
-                } else if (compare == -7)
-                {
-                    resultCompare = "Il y a une semaine";
-                } else if (compare < -7 && compare > -32)
-                {
-                    resultCompare = "Il y a plus de 1 semaine";
-                } else
-                {
-                    resultCompare = "Il y a plus de 1 mois";
-                }
-                baners.get(a).setText(resultCompare);
-
-                switch (moods.get(a).getCounter())
-                {
-                    case 0:
-                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.light_sage));
-                        baners.get(a).getLayoutParams().width = fourWidth;
-                        break;
-                    case 1:
-                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.cornflower_blue_65));
-                        baners.get(a).getLayoutParams().width = threeWidth;
-                        break;
-                    case 2:
-                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.warm_grey));
-                        baners.get(a).getLayoutParams().width = twoWidth;
-                        break;
-                    case 3:
-                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.faded_red));
-                        baners.get(a).getLayoutParams().width = fifthWidth;
-                        break;
-                    default:
-                        baners.get(a).setBackgroundColor(getResources().getColor(R.color.banana_yellow));
-                        baners.get(a).getLayoutParams().width = width;
-                }
-                a++;
-            }
-
+            case 0:
+                baners.get(a).setBackgroundColor(getResources().getColor(R.color.light_sage));
+                baners.get(a).getLayoutParams().width = fourWidth;
+                break;
+            case 1:
+                baners.get(a).setBackgroundColor(getResources().getColor(R.color.cornflower_blue_65));
+                baners.get(a).getLayoutParams().width = threeWidth;
+                break;
+            case 2:
+                baners.get(a).setBackgroundColor(getResources().getColor(R.color.warm_grey));
+                baners.get(a).getLayoutParams().width = twoWidth;
+                break;
+            case 3:
+                baners.get(a).setBackgroundColor(getResources().getColor(R.color.faded_red));
+                baners.get(a).getLayoutParams().width = fifthWidth;
+                break;
+            default:
+                baners.get(a).setBackgroundColor(getResources().getColor(R.color.banana_yellow));
+                baners.get(a).getLayoutParams().width = width;
         }
+        a++;
+    }
+
+    private void commentUserDisplayingManagement()
+    {
         if (moods.size() >= 1)
         {
             if (moods.get(0).getComment() != null)
             {
                 baners.get(0).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                baners.get(0).setForegroundGravity(21);
+                baners.get(0).setForegroundGravity(centerRight);
 
                 baners.get(0).setOnClickListener(new View.OnClickListener()
                 {
@@ -156,7 +186,7 @@ public class HistoricActivity extends AppCompatActivity
                 if (moods.get(1).getComment() != null)
                 {
                     baners.get(1).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(1).setForegroundGravity(21);
+                    baners.get(1).setForegroundGravity(centerRight);
 
                     baners.get(1).setOnClickListener(new View.OnClickListener()
                     {
@@ -172,7 +202,7 @@ public class HistoricActivity extends AppCompatActivity
                     if (moods.get(2).getComment() != null)
                     {
                         baners.get(2).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                        baners.get(2).setForegroundGravity(21);
+                        baners.get(2).setForegroundGravity(centerRight);
 
                         baners.get(2).setOnClickListener(new View.OnClickListener()
                         {
@@ -188,7 +218,7 @@ public class HistoricActivity extends AppCompatActivity
                         if (moods.get(3).getComment() != null)
                         {
                             baners.get(3).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                            baners.get(3).setForegroundGravity(21);
+                            baners.get(3).setForegroundGravity(centerRight);
 
                             baners.get(3).setOnClickListener(new View.OnClickListener()
                             {
@@ -204,7 +234,7 @@ public class HistoricActivity extends AppCompatActivity
                             if (moods.get(4).getComment() != null)
                             {
                                 baners.get(4).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                baners.get(4).setForegroundGravity(21);
+                                baners.get(4).setForegroundGravity(centerRight);
 
                                 baners.get(4).setOnClickListener(new View.OnClickListener()
                                 {
@@ -220,7 +250,7 @@ public class HistoricActivity extends AppCompatActivity
                                 if (moods.get(5).getComment() != null)
                                 {
                                     baners.get(5).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                    baners.get(5).setForegroundGravity(21);
+                                    baners.get(5).setForegroundGravity(centerRight);
 
                                     baners.get(5).setOnClickListener(new View.OnClickListener()
                                     {
@@ -236,7 +266,7 @@ public class HistoricActivity extends AppCompatActivity
                                     if (moods.get(6).getComment() != null)
                                     {
                                         baners.get(6).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                        baners.get(6).setForegroundGravity(21);
+                                        baners.get(6).setForegroundGravity(centerRight);
 
                                         baners.get(6).setOnClickListener(new View.OnClickListener()
                                         {
@@ -246,7 +276,6 @@ public class HistoricActivity extends AppCompatActivity
                                                 Toast.makeText(HistoricActivity.this, moods.get(6).getComment(), Toast.LENGTH_LONG).show();
                                             }
                                         });
-                                        }
                                     }
                                 }
                             }
@@ -256,6 +285,8 @@ public class HistoricActivity extends AppCompatActivity
             }
         }
     }
+}
+
 
 
 
