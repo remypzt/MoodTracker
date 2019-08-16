@@ -53,18 +53,16 @@ public class MainActivity extends AppCompatActivity
     };
 
     int counter = 0;
+    long previousDate;
+    String fromJsonMoods;
+    Gson gson = new Gson();
+    ArrayList<Mood> moods;
 
     private ConstraintLayout mContraintLayout;
     private ImageView mSmiley;
     private String userComment;
     private SharedPreferences mPreferences;
     private Mood mMood;
-    long previousDate;
-    String fromJsonMoods;
-
-    Gson gson = new Gson();
-    ArrayList<Mood> moods;
-
 
     @SuppressLint({"ClickableViewAccessibility", "WrongThread"})
     @Override
@@ -76,30 +74,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //FID
         mContraintLayout = findViewById(R.id.constraintLayout);
-        ImageView comment = findViewById(R.id.commentLogoView);
-        ImageView historic = findViewById(R.id.historicAcessLogoView);
-        Button mButton = findViewById(R.id.buttonshare);
         mSmiley = findViewById(R.id.smileyView);
-        //END\|FID
 
-        //get and compress Smiley for sharing mood
-        mSmiley.setDrawingCacheEnabled(true);
-        Bitmap bitmap = mSmiley.getDrawingCache();
-        File root = Environment.getExternalStorageDirectory();
-        final File cachePath = new File(root.getAbsolutePath() + "/DCIM/Camera/image.jpg");
-        try
-        {
-            cachePath.createNewFile();
-            FileOutputStream ostream = new FileOutputStream(cachePath);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-            ostream.close();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        //END\|get and compress Smiley for sharing mood
+        sharingMood();
 
         //mMood Management
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
@@ -111,59 +89,14 @@ public class MainActivity extends AppCompatActivity
         }.getType());
         //END\| mMood Management
 
-        // Display Mood and swipe management
-        displayingBehavior();
-        mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
-        {
-            public void onSwipeTop()
-            {
-                if (counter > 0)
-                {
-                    counter--;
-                    displayingBehavior();
-                } else
-                {
-                    counter = 4;
-                    displayingBehavior();
-                }
-                mMood.setComment(null);
-                swipeBehavior();
-            }
+        swipe();
+        comment();
+        historic();
+    }
 
-            public void onSwipeBottom()
-            {
-                if (counter < 4)
-                {
-                    counter++;
-                    displayingBehavior();
-                } else
-                {
-                    counter = 0;
-                    displayingBehavior();
-                }
-                mMood.setComment(null);
-                swipeBehavior();
-            }
-        });
-        //END\\ Display Mood and swipe management
-
-        //Share button
-        mButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                StrictMode.setVmPolicy(builder.build());
-                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sharingIntent.setType("image/*");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_STREAM, Uri.fromFile(cachePath));
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My mood");
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            }
-        });
-        //END\| Share button
-
+    private void comment()
+    {
+        ImageView comment = findViewById(R.id.commentLogoView);
         // Comment button management
         comment.setOnClickListener(new View.OnClickListener()
         {
@@ -205,26 +138,84 @@ public class MainActivity extends AppCompatActivity
             }
         });
         //END\\ Comment button management
+    }
 
-        // Historic button management
-        historic.setOnClickListener(new View.OnClickListener()
+    @SuppressLint("ClickableViewAccessibility")
+    private void swipe()
+    { // Display Mood and swipe management
+        displayingBehavior();
+        mContraintLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this)
+        {
+            public void onSwipeTop()
+            {
+                if (counter > 0)
+                {
+                    counter--;
+                    displayingBehavior();
+                } else
+                {
+                    counter = 4;
+                    displayingBehavior();
+                }
+                mMood.setComment(null);
+                swipeBehavior();
+            }
+
+            public void onSwipeBottom()
+            {
+                if (counter < 4)
+                {
+                    counter++;
+                    displayingBehavior();
+                } else
+                {
+                    counter = 0;
+                    displayingBehavior();
+                }
+                mMood.setComment(null);
+                swipeBehavior();
+            }
+        });
+        //END\\ Display Mood and swipe management
+    }
+
+    private void sharingMood()
+    {
+
+        //get and compress Smiley for sharing mood
+        mSmiley.setDrawingCacheEnabled(true);
+        Bitmap bitmap = mSmiley.getDrawingCache();
+        File root = Environment.getExternalStorageDirectory();
+        final File cachePath = new File(root.getAbsolutePath() + "/DCIM/Camera/image.jpg");
+        try
+        {
+            cachePath.createNewFile();
+            FileOutputStream ostream = new FileOutputStream(cachePath);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+            ostream.close();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        //END\|get and compress Smiley for sharing mood
+
+        //Share button
+        Button mButton = findViewById(R.id.buttonshare);
+        mButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-                if (null == fromJsonMoods)
-                {
-                    Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_SHORT).show();
-                } else
-                {
-                    Intent HistoricActivity = new Intent(MainActivity.this, HistoricActivity.class);
-                    startActivity(HistoricActivity);
-                }
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("image/*");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_STREAM, Uri.fromFile(cachePath));
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My mood");
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }
-
         });
-        //END\\ Historic button management
+        //END\| Share button
     }
 
     private void swipeBehavior()
@@ -303,5 +294,29 @@ public class MainActivity extends AppCompatActivity
     {
         mSmiley.setImageResource(arraySmileys[counter]);
         mContraintLayout.setBackgroundColor(getResources().getColor(arrayBackgroundColors[counter]));
+    }
+
+    private void historic()
+    {
+        // Historic button management
+        ImageView historic = findViewById(R.id.historicAcessLogoView);
+        historic.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+                if (null == fromJsonMoods)
+                {
+                    Toast.makeText(MainActivity.this, "Aucunes humeur n'a encore été enregistrée", Toast.LENGTH_SHORT).show();
+                } else
+                {
+                    Intent HistoricActivity = new Intent(MainActivity.this, HistoricActivity.class);
+                    startActivity(HistoricActivity);
+                }
+            }
+
+        });
+        //END\\ Historic button management
     }
 }

@@ -32,6 +32,14 @@ public class HistoricActivity extends AppCompatActivity
 
     int a = 0;
 
+    TextView baner = findViewById(R.id.imageView);
+    TextView baner2 = findViewById(R.id.imageView2);
+    TextView baner3 = findViewById(R.id.imageView3);
+    TextView baner4 = findViewById(R.id.imageView4);
+    TextView baner5 = findViewById(R.id.imageView5);
+    TextView baner6 = findViewById(R.id.imageView6);
+    TextView baner7 = findViewById(R.id.imageView7);
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -47,13 +55,6 @@ public class HistoricActivity extends AppCompatActivity
         {
         }.getType());
 
-        TextView baner = findViewById(R.id.imageView);
-        TextView baner2 = findViewById(R.id.imageView2);
-        TextView baner3 = findViewById(R.id.imageView3);
-        TextView baner4 = findViewById(R.id.imageView4);
-        TextView baner5 = findViewById(R.id.imageView5);
-        TextView baner6 = findViewById(R.id.imageView6);
-        TextView baner7 = findViewById(R.id.imageView7);
 
         ArrayList<TextView> baners = new ArrayList<>();
         baners.add(baner);
