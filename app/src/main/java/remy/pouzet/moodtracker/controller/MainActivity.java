@@ -29,7 +29,6 @@ import java.util.Date;
 
 import remy.pouzet.moodtracker.R;
 import remy.pouzet.moodtracker.model.Mood;
-import remy.pouzet.moodtracker.model.OnSwipeTouchListener;
 
 public class MainActivity extends AppCompatActivity
 {
