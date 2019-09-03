@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,12 @@ import java.util.Date;
 import remy.pouzet.moodtracker.R;
 import remy.pouzet.moodtracker.model.Mood;
 
+import static remy.pouzet.moodtracker.model.Util.TODAY;
+import static remy.pouzet.moodtracker.model.Util.aMonthAgo;
+import static remy.pouzet.moodtracker.model.Util.aWeekAgo;
+import static remy.pouzet.moodtracker.model.Util.beforeYesterday;
+import static remy.pouzet.moodtracker.model.Util.yesterday;
+
 /**
  * Created by Remy Pouzet on 29/06/2019.
  */
@@ -28,11 +35,7 @@ import remy.pouzet.moodtracker.model.Mood;
 public class HistoricActivity extends AppCompatActivity
 {
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
-    final int today = 0;
-    final int yesterday = -1;
-    final int beforeYesterday = -2;
-    final int aWeekAgo = -7;
-    final int aMonthAgo = -32;
+
     TextView baner;
     TextView baner2;
     TextView baner3;
@@ -40,16 +43,18 @@ public class HistoricActivity extends AppCompatActivity
     TextView baner5;
     TextView baner6;
     TextView baner7;
+
     //Util
-    int a = 0;
-    int centerRight = 21;
-    Date now = new Date();
-    long mDate = now.getTime() / 86400000;
+    int index = 0;
+    Date now;
+    long mDate;
     ArrayList<TextView> baners;
     Gson gson;
     ArrayList<Mood> moods;
     //END Util
+
     private SharedPreferences mPreferences;
+
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -64,6 +69,9 @@ public class HistoricActivity extends AppCompatActivity
         moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {
         }.getType());
+
+        now = new Date();
+        mDate = now.getTime() / 86400000;
 
         baner = findViewById(R.id.imageView);
         baner2 = findViewById(R.id.imageView2);
@@ -83,7 +91,7 @@ public class HistoricActivity extends AppCompatActivity
         baners.add(baner7);
 
         assert moods != null;
-        while (a + 1 <= moods.size() || moods.size() > 8)
+        while (index + 1 <= moods.size() || moods.size() > 8)
         {
             dispayingDateManagement();
             bannersBackgroundColorDisplayingManagement();
@@ -93,16 +101,16 @@ public class HistoricActivity extends AppCompatActivity
 
     private void dispayingDateManagement()
     {
-        if (moods.get(a) != null)
+        if (moods.get(index) != null)
         {
-            long longCompareCurrentDateToMoodDate = (moods.get(a).getDate() - mDate);
+            long longCompareCurrentDateToMoodDate = (moods.get(index).getDate() - mDate);
             int compareCurrentDateToMoodDate = (int) longCompareCurrentDateToMoodDate;
 
             String comparaisonResultatBetweenCurrentDateToMoodDate;
 
             switch (compareCurrentDateToMoodDate)
             {
-                case today:
+                case TODAY:
                     comparaisonResultatBetweenCurrentDateToMoodDate = "Aujourd'hui";
                     break;
                 case yesterday:
@@ -122,8 +130,7 @@ public class HistoricActivity extends AppCompatActivity
                     else
                         comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 mois";
             }
-
-            baners.get(a).setText(comparaisonResultatBetweenCurrentDateToMoodDate);
+            baners.get(index).setText(comparaisonResultatBetweenCurrentDateToMoodDate);
         }
     }
 
@@ -139,29 +146,29 @@ public class HistoricActivity extends AppCompatActivity
         int twoWidth = fifthWidth * 2;
 
 
-        switch (moods.get(a).getCounter())
+        switch (moods.get(index).getCounter())
         {
             case 0:
-                baners.get(a).setBackgroundColor(getResources().getColor(R.color.light_sage));
-                baners.get(a).getLayoutParams().width = fourWidth;
+                baners.get(index).setBackgroundColor(getResources().getColor(R.color.light_sage));
+                baners.get(index).getLayoutParams().width = fourWidth;
                 break;
             case 1:
-                baners.get(a).setBackgroundColor(getResources().getColor(R.color.cornflower_blue_65));
-                baners.get(a).getLayoutParams().width = threeWidth;
+                baners.get(index).setBackgroundColor(getResources().getColor(R.color.cornflower_blue_65));
+                baners.get(index).getLayoutParams().width = threeWidth;
                 break;
             case 2:
-                baners.get(a).setBackgroundColor(getResources().getColor(R.color.warm_grey));
-                baners.get(a).getLayoutParams().width = twoWidth;
+                baners.get(index).setBackgroundColor(getResources().getColor(R.color.warm_grey));
+                baners.get(index).getLayoutParams().width = twoWidth;
                 break;
             case 3:
-                baners.get(a).setBackgroundColor(getResources().getColor(R.color.faded_red));
-                baners.get(a).getLayoutParams().width = fifthWidth;
+                baners.get(index).setBackgroundColor(getResources().getColor(R.color.faded_red));
+                baners.get(index).getLayoutParams().width = fifthWidth;
                 break;
             default:
-                baners.get(a).setBackgroundColor(getResources().getColor(R.color.banana_yellow));
-                baners.get(a).getLayoutParams().width = width;
+                baners.get(index).setBackgroundColor(getResources().getColor(R.color.banana_yellow));
+                baners.get(index).getLayoutParams().width = width;
         }
-        a++;
+        index++;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -170,7 +177,7 @@ public class HistoricActivity extends AppCompatActivity
         if (moods.get(id).getComment() != null)
         {
             baners.get(id).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-            baners.get(id).setForegroundGravity(centerRight);
+            baners.get(id).setForegroundGravity(Gravity.CENTER_VERTICAL + Gravity.RIGHT);
 
             baners.get(id).setOnClickListener(new View.OnClickListener()
             {
