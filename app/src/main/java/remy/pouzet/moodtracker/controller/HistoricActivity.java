@@ -46,6 +46,8 @@ public class HistoricActivity extends AppCompatActivity
     Date now = new Date();
     long mDate = now.getTime() / 86400000;
     ArrayList<TextView> baners;
+    Gson gson;
+    ArrayList<Mood> moods;
     //END Util
     private SharedPreferences mPreferences;
 
@@ -57,9 +59,9 @@ public class HistoricActivity extends AppCompatActivity
         setContentView(R.layout.historic_activity);
 
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        Gson gson = new Gson();
+        gson = new Gson();
         String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
         {
         }.getType());
 
@@ -91,13 +93,6 @@ public class HistoricActivity extends AppCompatActivity
 
     private void dispayingDateManagement()
     {
-        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
-
         if (moods.get(a) != null)
         {
             long longCompareCurrentDateToMoodDate = (moods.get(a).getDate() - mDate);
@@ -121,16 +116,11 @@ public class HistoricActivity extends AppCompatActivity
                     break;
                 default:
                     if (compareCurrentDateToMoodDate < beforeYesterday && compareCurrentDateToMoodDate > aWeekAgo)
-                    {
                         comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a " + (compareCurrentDateToMoodDate - compareCurrentDateToMoodDate * 2) + " jours";
-                    } else if (compareCurrentDateToMoodDate < aWeekAgo && compareCurrentDateToMoodDate > aMonthAgo)
-                    {
+                    else if (compareCurrentDateToMoodDate < aWeekAgo && compareCurrentDateToMoodDate > aMonthAgo)
                         comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 semaine";
-                    } else
-                    {
+                    else
                         comparaisonResultatBetweenCurrentDateToMoodDate = "Il y a plus de 1 mois";
-                    }
-
             }
 
             baners.get(a).setText(comparaisonResultatBetweenCurrentDateToMoodDate);
@@ -148,12 +138,6 @@ public class HistoricActivity extends AppCompatActivity
         int threeWidth = fifthWidth * 3;
         int twoWidth = fifthWidth * 2;
 
-        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
 
         switch (moods.get(a).getCounter())
         {
@@ -183,13 +167,6 @@ public class HistoricActivity extends AppCompatActivity
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void display(final int id)
     {
-        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-        {
-        }.getType());
-
         if (moods.get(id).getComment() != null)
         {
             baners.get(id).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
@@ -209,42 +186,14 @@ public class HistoricActivity extends AppCompatActivity
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void commentUserDisplayingManagement()
     {
-        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        for (int id = 0; moods.size() >= (id + 1); id++)
         {
-        }.getType());
-
-        if (moods.size() >= 1)
-        {
-            display(0);
-            if (moods.size() >= 2)
-            {
-                display(1);
-                if (moods.size() >= 3)
-                {
-                    display(2);
-                    if (moods.size() >= 4)
-                    {
-                        display(3);
-                        if (moods.size() >= 5)
-                        {
-                            display(4);
-                            if (moods.size() >= 6)
-                            {
-                                display(5);
-                                if (moods.size() >= 7)
-                                {
-                                    display(6);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            display(id);
         }
     }
 }
+
+
+
 
 
