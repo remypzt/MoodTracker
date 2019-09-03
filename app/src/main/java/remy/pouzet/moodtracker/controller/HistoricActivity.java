@@ -28,43 +28,50 @@ import remy.pouzet.moodtracker.model.Mood;
 public class HistoricActivity extends AppCompatActivity
 {
     public static final String PREF_KEY_MOOD = "PREF_KEY_MOOD";
-    private SharedPreferences mPreferences;
-
-    Gson gson = new Gson();
-    String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
-    final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
-    {
-    }.getType());
-    //Util
-    int a = 0;
-    int centerRight = 21;
-    Date now = new Date();
-    long mDate = now.getTime() / 86400000;
     final int today = 0;
     final int yesterday = -1;
     final int beforeYesterday = -2;
     final int aWeekAgo = -7;
     final int aMonthAgo = -32;
+    TextView baner;
+    TextView baner2;
+    TextView baner3;
+    TextView baner4;
+    TextView baner5;
+    TextView baner6;
+    TextView baner7;
+    //Util
+    int a = 0;
+    int centerRight = 21;
+    Date now = new Date();
+    long mDate = now.getTime() / 86400000;
+    ArrayList<TextView> baners;
     //END Util
+    private SharedPreferences mPreferences;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.historic_activity);
 
         mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
 
-        TextView baner = findViewById(R.id.imageView);
-        TextView baner2 = findViewById(R.id.imageView2);
-        TextView baner3 = findViewById(R.id.imageView3);
-        TextView baner4 = findViewById(R.id.imageView4);
-        TextView baner5 = findViewById(R.id.imageView5);
-        TextView baner6 = findViewById(R.id.imageView6);
-        TextView baner7 = findViewById(R.id.imageView7);
+        baner = findViewById(R.id.imageView);
+        baner2 = findViewById(R.id.imageView2);
+        baner3 = findViewById(R.id.imageView3);
+        baner4 = findViewById(R.id.imageView4);
+        baner5 = findViewById(R.id.imageView5);
+        baner6 = findViewById(R.id.imageView6);
+        baner7 = findViewById(R.id.imageView7);
 
-        ArrayList<TextView> baners = new ArrayList<>();
+        baners = new ArrayList<>();
         baners.add(baner);
         baners.add(baner2);
         baners.add(baner3);
@@ -84,6 +91,12 @@ public class HistoricActivity extends AppCompatActivity
 
     private void dispayingDateManagement()
     {
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
 
         if (moods.get(a) != null)
         {
@@ -135,6 +148,13 @@ public class HistoricActivity extends AppCompatActivity
         int threeWidth = fifthWidth * 3;
         int twoWidth = fifthWidth * 2;
 
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+
         switch (moods.get(a).getCounter())
         {
             case 0:
@@ -160,120 +180,63 @@ public class HistoricActivity extends AppCompatActivity
         a++;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void display(final int id)
+    {
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+
+        if (moods.get(id).getComment() != null)
+        {
+            baners.get(id).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
+            baners.get(id).setForegroundGravity(centerRight);
+
+            baners.get(id).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(final View v)
+                {
+                    Toast.makeText(HistoricActivity.this, moods.get(id).getComment(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void commentUserDisplayingManagement()
     {
+        mPreferences = getSharedPreferences(PREF_KEY_MOOD, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String fromJsonMoods = mPreferences.getString(PREF_KEY_MOOD, null);
+        final ArrayList<Mood> moods = gson.fromJson(fromJsonMoods, new TypeToken<ArrayList<Mood>>()
+        {
+        }.getType());
+
         if (moods.size() >= 1)
         {
-            if (moods.get(0).getComment() != null)
-            {
-                baners.get(0).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                baners.get(0).setForegroundGravity(centerRight);
-
-                baners.get(0).setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(final View v)
-                    {
-                        Toast.makeText(HistoricActivity.this, moods.get(0).getComment(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
+            display(0);
             if (moods.size() >= 2)
             {
-                if (moods.get(1).getComment() != null)
-                {
-                    baners.get(1).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                    baners.get(1).setForegroundGravity(centerRight);
-
-                    baners.get(1).setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(final View v)
-                        {
-                            Toast.makeText(HistoricActivity.this, moods.get(1).getComment(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
+                display(1);
                 if (moods.size() >= 3)
                 {
-                    if (moods.get(2).getComment() != null)
-                    {
-                        baners.get(2).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                        baners.get(2).setForegroundGravity(centerRight);
-
-                        baners.get(2).setOnClickListener(new View.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(final View v)
-                            {
-                                Toast.makeText(HistoricActivity.this, moods.get(2).getComment(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
+                    display(2);
                     if (moods.size() >= 4)
                     {
-                        if (moods.get(3).getComment() != null)
-                        {
-                            baners.get(3).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                            baners.get(3).setForegroundGravity(centerRight);
-
-                            baners.get(3).setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(final View v)
-                                {
-                                    Toast.makeText(HistoricActivity.this, moods.get(3).getComment(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
+                        display(3);
                         if (moods.size() >= 5)
                         {
-                            if (moods.get(4).getComment() != null)
-                            {
-                                baners.get(4).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                baners.get(4).setForegroundGravity(centerRight);
-
-                                baners.get(4).setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(final View v)
-                                    {
-                                        Toast.makeText(HistoricActivity.this, moods.get(4).getComment(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
+                            display(4);
                             if (moods.size() >= 6)
                             {
-                                if (moods.get(5).getComment() != null)
-                                {
-                                    baners.get(5).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                    baners.get(5).setForegroundGravity(centerRight);
-
-                                    baners.get(5).setOnClickListener(new View.OnClickListener()
-                                    {
-                                        @Override
-                                        public void onClick(final View v)
-                                        {
-                                            Toast.makeText(HistoricActivity.this, moods.get(5).getComment(), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                }
+                                display(5);
                                 if (moods.size() >= 7)
                                 {
-                                    if (moods.get(6).getComment() != null)
-                                    {
-                                        baners.get(6).setForeground(getResources().getDrawable(R.mipmap.ic_comment_black_48px));
-                                        baners.get(6).setForegroundGravity(centerRight);
-
-                                        baners.get(6).setOnClickListener(new View.OnClickListener()
-                                        {
-                                            @Override
-                                            public void onClick(final View v)
-                                            {
-                                                Toast.makeText(HistoricActivity.this, moods.get(6).getComment(), Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                    }
+                                    display(6);
                                 }
                             }
                         }
@@ -283,7 +246,5 @@ public class HistoricActivity extends AppCompatActivity
         }
     }
 }
-
-
 
 
